@@ -1,0 +1,577 @@
+<!-- Creator     : groff version 1.22.4 -->
+<!-- CreationDate: Fri Aug  8 10:59:43 2025 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>LOOPRM</title>
+
+</head>
+<body>
+
+<h1 align="center">LOOPRM</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#USAGE">USAGE</a><br>
+<a href="#FILESYSTEM REQUIREMENTS">FILESYSTEM REQUIREMENTS</a><br>
+<a href="#SYSTEM TIME REQUIREMENTS">SYSTEM TIME REQUIREMENTS</a><br>
+<a href="#LOGGING">LOGGING</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#COMPUTATIONAL COMPLEXITY">COMPUTATIONAL COMPLEXITY</a><br>
+<a href="#EXIT STATUS">EXIT STATUS</a><br>
+<a href="#COPYRIGHT">COPYRIGHT</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">looprm - remove
+oldest files to maintain free disk space</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
+[<i>OPTION</i>]... <i>DIR SPACE</i></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><i>DIR</i></p></td>
+<td width="4%"></td>
+<td width="56%">
+
+
+<p>target directory</p></td>
+<td width="22%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><i>SPACE</i></p></td>
+<td width="4%"></td>
+<td width="56%">
+
+
+<p>minimal requested free space in bytes</p></td>
+<td width="22%">
+</td></tr>
+</table>
+
+<p style="margin-left:22%;">(supports suffixes K/M/G/T/P/E
+for KiB/MiB/GiB/TiB/PiB/EiB)</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
+removes the oldest files under directory <i>DIR</i> unless
+and until the free space on the underlying filesystem
+matches or exceeds <i>SPACE</i>. It operates in one-shot
+mode and is expected to be invoked on each new file creation
+event to implement the loop recording feature for
+video/audio recorders and data loggers.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If the free
+space is lower than <i>SPACE</i>, <b>looprm</b>
+non-recursively scans <i>DIR</i> for regular files (which
+may be name-filtered with the <b>-b</b> and <b>-e</b>
+options) and then removes the oldest ones (according to file
+modify time) until the free space grows to the requested
+value.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The number of
+files removed during a single invocation is limited, which
+allows efficient operation even if <i>DIR</i> contains a
+large number of matching files, as this limit allows
+<b>looprm</b> to sort only the limited number of oldest
+ones. The limit can and should be adjusted with the
+<b>-m</b> option according to the particular use case (see
+<b>USAGE</b> below). Without the <b>-m</b> option, a default
+limit of 16 files is used.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If the
+<b>-z</b> option is given, <b>looprm</b> also removes all
+matching empty files (except freshly created ones to avoid
+removing a newly created file before the first data are
+written to it).</p>
+
+<p style="margin-left:11%; margin-top: 1em">Removed files
+are truncated to zero length before deletion to assure
+freeing of occupied disk space even if the files are open by
+other processes.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Options without
+arguments may be concatenated after a single hyphen. Space
+between options and mandatory arguments may be omitted.
+Optional arguments (indicated by square brackets) must
+directly follow options without any separating space.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>Program
+Information</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p style="margin-top: 1em"><b>-h</b></p></td>
+<td width="8%"></td>
+<td width="38%">
+
+
+<p style="margin-top: 1em">Output usage information.</p></td>
+<td width="40%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p><b>-l</b></p></td>
+<td width="8%"></td>
+<td width="38%">
+
+
+<p>Output built-in limits.</p></td>
+<td width="40%">
+</td></tr>
+</table>
+
+<p style="margin-left:11%; margin-top: 1em"><b>Target File
+Selection</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p style="margin-top: 1em"><b>-b</b> <i>B</i></p></td>
+<td width="5%"></td>
+<td width="70%">
+
+
+<p style="margin-top: 1em">Remove only files with names
+beginning with <i>B</i>.</p></td>
+<td width="8%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-e</b> <i>E</i></p></td>
+<td width="5%"></td>
+<td width="70%">
+
+
+<p>Remove only files with names ending in <i>E</i>.</p></td>
+<td width="8%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>Operation</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p style="margin-top: 1em"><b>-d</b> <i>D</i></p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em">Warn if execution time exceeds
+<i>D</i> seconds.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>-m</b> <i>M</i></p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>Remove at most <i>M</i> files (default: 16, maximum:
+16777216); not applied to empty files removed with the
+<b>-z</b> option. The value of <i>M</i> should be set
+slightly above the ratio between maximal and minimal
+possible file size (see <b>USAGE</b> below).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>-n</b></p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>No-action dry run (log only, no files removed).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>-p</b></p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>Consider free space for privileged users.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>-z</b>[<i>A</i>]</p></td>
+<td width="4%"></td>
+<td width="78%">
+
+
+<p>Remove also all empty files older than <i>A</i> seconds
+(default: 60s when <i>A</i> is omitted). As the presence of
+empty files (which may be created as a result of free space
+exhaustion when unexpected files are created on the target
+filesystem, or <i>SPACE</i> and/or <b>-m</b> <i>M</i> are
+set too low) is disruptive for <b>looprm</b> due to not
+incrementing free space on removal, use of this option is
+recommended to enable removal of such empty files during
+directory scan (see <b>USAGE</b> below).</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>Logging</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p style="margin-top: 1em"><b>-q</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em">Disable logging to standard
+error.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-s</b> <i>F</i></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Log to syslog with facility <i>F</i> (implies
+<b>-q</b>).</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-v</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Increase log verbosity (use twice for debug output).</p></td></tr>
+</table>
+
+<h2>USAGE
+<a name="USAGE"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">To achieve
+optimal performance, <i>SPACE</i> should be set to a low
+multiple of the maximal possible file size created by the
+recording process. The maximal number of removed files
+(<b>-m</b> <i>M</i>) should be set to a minimal value
+required to assure freeing of sufficient disk space for such
+maximal file size, i.e., slightly above the ratio between
+maximal and minimal possible file size.</p>
+
+<p style="margin-left:11%; margin-top: 1em">For example, in
+case of a data logger or recorder that creates a series of
+files with a constant size of 10 MiB, the value of
+<i>SPACE</i> could be set as low as 20 MiB to keep minimal
+free space sufficient for creating a new file, and the
+maximal number of removed files can be set to a low value of
+a few files (let&rsquo;s say 8) using the <b>-m</b> option.
+Due to the nearly constant file size, the loop recording
+process will need to remove only the single oldest file to
+free enough space for the newly created one in the vast
+majority of cases, and even if a small file ocassionaly
+appears due to, e.g., a restart or power loss, the limit of
+<b>-m 8</b> will hopefully allow <b>looprm</b> to remove
+enough files to meet the space goal, while being small
+enough to allow very effective operation even on a directory
+with a large number of files.</p>
+
+<p style="margin-left:11%; margin-top: 1em">In the case of
+files with variable sizes (e.g., a motion-detection camera
+creating files of sizes between 0.5 and 10 MiB depending on
+the amount of detected motion), the maximal number of
+removed files needs to be raised to a higher value to
+reflect the fact that it may be necessary to remove 20 or
+even slightly more old files in order to free enough disk
+space for a single new file of maximal possible size. A
+limit of <b>-m 32</b> could be sufficient for this
+particular example.</p>
+
+<p style="margin-left:11%; margin-top: 1em">It&rsquo;s also
+recommended to use the <b>-z</b> option, as without it,
+<b>looprm</b> treats empty files as other regular files and
+counts these into the limit specified with the <b>-m</b>
+option, which may amplify the negative impact of the
+original incident that caused the empty files to be created
+(without <b>-z</b>, a series of empty files created during a
+space exhaustion incident may cause another space exhaustion
+incident when these files become the oldest ones to
+remove).</p>
+
+<p style="margin-left:11%; margin-top: 1em">To safeguard
+against removal of just-created files before the first data
+write, emty files newer than a minimal age of 60 seconds are
+not removed with <b>-z</b>. This minimal age may be adjusted
+with the optional argument <i>A</i> to the <b>-z</b>
+option.</p>
+
+<p style="margin-left:11%; margin-top: 1em">In cases where
+<b>looprm</b> may get invoked in short intervals (e.g., a
+motion detection camera that creates one file per minute
+when continuous motion is detected, but may also create one
+file per 10 seconds when interrupted motion happens),
+it&rsquo;s also recommended to use the <b>-d</b> <i>D</i>
+option with the value of <i>D</i> set to the maximal
+expected execution time of <b>looprm</b> in seconds (e.g.,
+<b>-d 10</b> in the above example). This option will cause
+<b>looprm</b> to log a warning message if it runs longer
+than expected, which allows to detect and avoid the
+possibility of multiple parallel executions of <b>looprm</b>
+due to frequent invocations.</p>
+
+<h2>FILESYSTEM REQUIREMENTS
+<a name="FILESYSTEM REQUIREMENTS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
+requires the underlying filesystem to return accurate and
+up-to-date free space information through the statvfs
+syscall immediately after file truncation and removal.
+Current version was tested on ext3/ext4 filesystems, which
+seem to comply with this requirement.</p>
+
+<p style="margin-left:11%; margin-top: 1em">In addition,
+the filesystem must not have block count inconsistencies, as
+these may cause the filesystem to behave like a full one
+(i.e., allowing to create new files but failing to write any
+data to these due to space exhaustion), while the reported
+free block count claims that free blocks are available. To
+avoid such situations (which may completely block the loop
+recording process by causing <b>looprm</b> to stop removing
+files), use of a journaling filesystem and boot-time fsck is
+strongly recommended.</p>
+
+<p style="margin-left:11%; margin-top: 1em">To achieve
+maximal disk utilization (by setting <i>SPACE</i> as low as
+possible to keep minimal free space) and maximal efficiency
+(by using low value for <b>-m</b> <i>M</i> to minimize CPU
+and memory usage), a dedicated partition should be used for
+the loop recording process.</p>
+
+<h2>SYSTEM TIME REQUIREMENTS
+<a name="SYSTEM TIME REQUIREMENTS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">As
+<b>looprm</b> depends on timestamps to identify the oldest
+files to remove, the system time needs to avoid moving
+backwards. On systems without hardware RTC, usage of
+<b>fake-hwclock</b> is recommended, while replacing its
+hourly time saving cronjob with a more frequent one may be a
+good idea as well:</p>
+
+<p style="margin-left:11%; margin-top: 1em">rm
+/etc/cron.hourly/fake-hwclock <br>
+echo -e &rsquo;*/5 * * * *\troot\t/sbin/fake-hwclock
+save&rsquo; &gt; /etc/cron.d/fake-hwclock</p>
+
+<h2>LOGGING
+<a name="LOGGING"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
+uses log levels derived from syslog, ranging from debug to
+emergency. The default log level is notice. At this level,
+<b>looprm</b> logs one message on each removed file, as well
+as all warning and errors.</p>
+
+<p style="margin-left:11%; margin-top: 1em">If a single
+<b>-v</b> option is given, the log level is changed to info,
+which adds a few statistic messages on filesystem usage,
+removed files and execution time. Giving this option twice
+changes log level to debug.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Errors
+encountered while parsing command line options given before
+the <b>-s</b> option are logged to standard error, even if
+the <b>-s</b> option is given later. As some calling
+programs (e.g., <b>motion</b>) silently discard error
+messages from invoked commands, it&rsquo;s recommended to
+place the <b>-s</b> option as the first one when using
+syslog.</p>
+
+<h2>EXAMPLES
+<a name="EXAMPLES"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">To implement
+loop video recording with <b>motion</b> using <b>looprm</b>
+for file removal, invoke <b>looprm</b> using the
+<i>on_movie_start</i> script option in motion.conf (replace
+<i>EXT</i> with the extension of recorded video files,
+<i>DIR</i> with full path to the target directory and
+<i>SPACE</i> with required free space, and adjust arguments
+to <b>-d</b> and <b>-m</b> according to your needs: the
+argument to <b>-d</b> should match the <i>event_gap</i>
+value which controls the minimal interval at which
+<b>motion</b> creates new files, while the argument to
+<b>-m</b> depends on the ratio between maximal and minimal
+possible file size as described above):</p>
+
+<p style="margin-left:11%; margin-top: 1em">on_movie_start
+/usr/bin/looprm -suser -d10 -m128 -z -e.<i>EXT DIR
+SPACE</i></p>
+
+<h2>COMPUTATIONAL COMPLEXITY
+<a name="COMPUTATIONAL COMPLEXITY"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The time
+complexity (a.k.a. CPU usage) and space complexity (a.k.a.
+memory usage) of <b>looprm</b> depend on:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="1%">
+
+
+<p style="margin-top: 1em"><b>N</b></p></td>
+<td width="10%"></td>
+<td width="78%">
+
+
+<p style="margin-top: 1em">number of files under target
+directory</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="1%">
+
+
+<p><b>M</b></p></td>
+<td width="10%"></td>
+<td width="78%">
+
+
+<p>maximal number of removed files (specified with the
+<b>-m</b> <i>M</i> option)</p></td></tr>
+</table>
+
+<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
+first scans the target directory with worst case time
+complexity <b>O(M*N)</b> when reading directory returns
+files ordered as newest to oldest (best case complexity is
+<b>O(N)</b> when the order is oldest to newest), and then
+removes up to <b>M</b> files with time complexity
+<b>O(M)</b>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">As the time
+required for filesystem operations (especially file removal)
+also grows with <b>N</b>, the time complexity of the removal
+phase is actualy <b>O(M*fs(N))</b>, with <b>fs(N)</b>
+expressing the dependency of file removal time on increasing
+<b>N</b>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Space
+complexity is <b>O(M)</b> (or less when the actual number of
+target files is lower than <b>M</b>).</p>
+
+<h2>EXIT STATUS
+<a name="EXIT STATUS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Exit status is
+0 if the space goal was met, 1 if files were removed but the
+space goal was not met, and 2 in trouble (errors encoutered
+or space goal not met while no target files found).</p>
+
+<h2>COPYRIGHT
+<a name="COPYRIGHT"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Copyright (c)
+2025 Vic B &lt;vic@4ever.vip&gt;. <br>
+License GPLv3: GNU GPL version 3
+&lt;https://gnu.org/licenses/gpl.html&gt;. <br>
+This is free software: you are free to change and
+redistribute it. <br>
+There is <b>NO WARRANTY</b>, to the extent permitted by
+law.</p>
+<hr>
+</body>
+</html>

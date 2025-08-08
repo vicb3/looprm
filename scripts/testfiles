@@ -1,0 +1,63 @@
+#!/bin/sh -e
+
+# helper script to create tuples of files with different name prefix & suffix
+# for looprm testing.
+
+HLP="usage: ${0##*/} [-r|-R] DIR FILE-TUPLE-COUNT FILE-SIZE-IN-BLOCKS [BLOCK-SIZE]\n"\
+"   -r  revert mtime order against ctime order\n"\
+"   -R  randomize mtime"
+
+
+PFX1=a
+SFX1=x
+PFX2=b
+SFX2=y
+# default blocksize
+BLK=$((1024*1024))
+ORD=
+
+hlp() {
+	echo "$HLP"
+	exit 0
+}
+
+while getopts :rR OPT 2> /dev/null; do
+	case "$OPT" in
+	r)	ORD=tac
+		;;
+	R)	ORD=shuf
+		;;
+	*)	hlp
+	esac
+done
+shift $((OPTIND - 1))
+
+[ $# -ge 3 -a $# -le 4 ] ||
+	hlp
+
+DIR=$1
+CNT=$2
+FSZ=$3
+
+[ -n "$4" ] &&
+	BLK=$4
+
+for n in $(seq -w 0 "$((CNT-1))"); do
+	F1=$DIR/$PFX1-$n.$SFX1
+	F2=$DIR/$PFX2-$n.$SFX2
+	dd status=none if=/dev/zero of="$F1" bs="$BLK" count="$FSZ"
+	dd status=none if=/dev/zero of="$F2" bs="$BLK" count="$FSZ"
+	[ -n "$ORD" ] ||
+		continue
+	if [ -n "$FLS" ]; then
+		FLS=$(printf '%s\n%s\n%s' "$FLS" "$F1" "$F2")
+	else
+		FLS=$(printf '%s\n%s' "$F1" "$F2")
+	fi
+done
+
+if [ -n "$ORD" ]; then
+	printf "%s\n" "$FLS" | $ORD | while read F; do
+		touch "$F"
+	done
+fi

@@ -1,0 +1,234 @@
+.\" Copyright (c) 2025 Vic B <vic@4ever.vip>
+.TH LOOPRM 1
+.SH NAME
+looprm \- remove oldest files to maintain free disk space
+.SH SYNOPSIS
+\fBlooprm\fP [\fI\,OPTION\/\fP]... \fIDIR\fP \fISPACE\fP
+.TP
+\fIDIR\fP
+target directory
+.TP
+\fISPACE\fP
+minimal requested free space in bytes
+.br
+(supports suffixes K/M/G/T/P/E for KiB/MiB/GiB/TiB/PiB/EiB)
+.SH DESCRIPTION
+.hy 0
+\fBlooprm\fP removes the oldest files under directory \fIDIR\fP unless and
+until the free space on the underlying filesystem matches or exceeds
+\fISPACE\fP. It operates in one-shot mode and is expected to be invoked on
+each new file creation event to implement the loop recording feature for
+video/audio recorders and data loggers.
+.PP
+If the free space is lower than \fISPACE\fP, \fBlooprm\fP non-recursively scans
+\fIDIR\fP for regular files (which may be name-filtered with the \fB-b\fP and
+\fB-e\fP options) and then removes the oldest ones (according to file modify
+time) until the free space grows to the requested value.
+.PP
+The number of files removed during a single invocation is limited, which allows
+efficient operation even if \fIDIR\fP contains a large number of matching
+files, as this limit allows \fBlooprm\fP to sort only the limited number of
+oldest ones. The limit can and should be adjusted with the \fB-m\fP option
+according to the particular use case (see \fBUSAGE\fP below). Without the
+\fB-m\fP option, a default limit of 16 files is used.
+.PP
+If the \fB-z\fP option is given, \fBlooprm\fP also removes all matching empty
+files (except freshly created ones to avoid removing a newly created file
+before the first data are written to it).
+.PP
+Removed files are truncated to zero length before deletion to assure freeing
+of occupied disk space even if the files are open by other processes.
+.SH OPTIONS
+.hy 0
+.PP
+Options without arguments may be concatenated after a single hyphen.
+Space between options and mandatory arguments may be omitted. Optional
+arguments (indicated by square brackets) must directly follow options
+without any separating space.
+.SS Program Information
+.TP
+\fB\-h\fP
+Output usage information.
+.TP
+\fB\-l\fP
+Output built-in limits.
+.SS Target File Selection
+.TP
+\fB\-b\fP \fIB\fP
+Remove only files with names beginning with \fIB\fP.
+.TP
+\fB\-e\fP \fIE\fP
+Remove only files with names ending in \fIE\fP.
+.SS Operation
+.TP
+\fB\-d\fP \fID\fP
+Warn if execution time exceeds \fID\fP seconds.
+.TP
+\fB\-m\fP \fIM\fP
+Remove at most \fIM\fP files (default: 16, maximum: 16777216); not applied to
+empty files removed with the \fB-z\fP option. The value of \fIM\fP should be
+set slightly above the ratio between maximal and minimal possible file size
+(see \fBUSAGE\fP below).
+.TP
+\fB\-n\fP
+No-action dry run (log only, no files removed).
+.TP
+\fB\-p\fP
+Consider free space for privileged users.
+.TP
+\fB\-z\fP[\fI\,A\/\fP]
+Remove also all empty files older than \fIA\fP seconds (default: 60s when
+\fIA\fP is omitted). As the presence of empty files (which may be created as a
+result of free space exhaustion when unexpected files are created on the target
+filesystem, or \fISPACE\fP and/or \fB-m\fP \fIM\fP are set too low) is
+disruptive for \fBlooprm\fP due to not incrementing free space on removal, use
+of this option is recommended to enable removal of such empty files during
+directory scan (see \fBUSAGE\fP below).
+.SS Logging
+.TP
+\fB\-q\fP
+Disable logging to standard error.
+.TP
+\fB\-s\fP \fIF\fP
+Log to syslog with facility \fIF\fP (implies \fB-q\fP).
+.TP
+\fB\-v\fP
+Increase log verbosity (use twice for debug output).
+.SH USAGE
+To achieve optimal performance, \fISPACE\fP should be set to a low multiple of
+the maximal possible file size created by the recording process. The maximal
+number of removed files (\fB-m\fP \fIM\/\fP) should be set to a minimal value
+required to assure freeing of sufficient disk space for such maximal file size,
+i.e., slightly above the ratio between maximal and minimal possible file size.
+.PP
+For example, in case of a data logger or recorder that creates a series of files
+with a constant size of 10 MiB, the value of \fISPACE\fP could be set as low as
+20 MiB to keep minimal free space sufficient for creating a new file, and the
+maximal number of removed files can be set to a low value of a few files (let's
+say 8) using the \fB-m\fP option. Due to the nearly constant file size, the
+loop recording process will need to remove only the single oldest file to free
+enough space for the newly created one in the vast majority of cases, and even
+if a small file ocassionaly appears due to, e.g., a restart or power loss, the
+limit of \fB-m 8\fP will hopefully allow \fBlooprm\fP to remove enough files
+to meet the space goal, while being small enough to allow very effective
+operation even on a directory with a large number of files.
+.PP
+In the case of files with variable sizes (e.g., a motion-detection camera
+creating files of sizes between 0.5 and 10 MiB depending on the amount of
+detected motion), the maximal number of removed files needs to be raised to a
+higher value to reflect the fact that it may be necessary to remove 20 or even
+slightly more old files in order to free enough disk space for a single new
+file of maximal possible size. A limit of \fB-m 32\fP could be sufficient for
+this particular example.
+.PP
+It's also recommended to use the \fB-z\fP option, as without it, \fBlooprm\fP
+treats empty files as other regular files and counts these into the limit
+specified with the \fB-m\fP option, which may amplify the negative impact of
+the original incident that caused the empty files to be created (without
+\fB-z\fP, a series of empty files created during a space exhaustion incident
+may cause another space exhaustion incident when these files become the oldest
+ones to remove).
+.PP
+To safeguard against removal of just-created files before the first data write,
+emty files newer than a minimal age of 60 seconds are not removed with \fB-z\fP. This minimal age may be adjusted with the optional argument \fIA\fP to the
+\fB-z\fP option.
+.PP
+In cases where \fBlooprm\fP may get invoked in short intervals (e.g., a motion
+detection camera that creates one file per minute when continuous motion is
+detected, but may also create one file per 10 seconds when interrupted motion
+happens), it's also recommended to use the \fB-d\fP \fID\fP option with the
+value of \fID\fP set to the maximal expected execution time of \fBlooprm\fP in
+seconds (e.g., \fB-d 10\fP in the above example). This option will cause
+\fBlooprm\fP to log a warning message if it runs longer than expected, which
+allows to detect and avoid the possibility of multiple parallel executions of
+\fBlooprm\fP due to frequent invocations.
+.SH FILESYSTEM REQUIREMENTS
+\fBlooprm\fP requires the underlying filesystem to return accurate and
+up-to-date free space information through the statvfs syscall immediately
+after file truncation and removal. Current version was tested on ext3/ext4
+filesystems, which seem to comply with this requirement.
+.PP
+In addition, the filesystem must not have block count inconsistencies, as these
+may cause the filesystem to behave like a full one (i.e., allowing to create
+new files but failing to write any data to these due to space exhaustion),
+while the reported free block count claims that free blocks are available. To
+avoid such situations (which may completely block the loop recording process by
+causing \fBlooprm\fP to stop removing files), use of a journaling filesystem
+and boot-time fsck is strongly recommended.
+.PP
+To achieve maximal disk utilization (by setting \fISPACE\fP as low as possible
+to keep minimal free space) and maximal efficiency (by using low value for
+\fB-m\fP \fIM\fP to minimize CPU and memory usage), a dedicated partition
+should be used for the loop recording process.
+.SH SYSTEM TIME REQUIREMENTS
+As \fBlooprm\fP depends on timestamps to identify the oldest files to remove,
+the system time needs to avoid moving backwards. On systems without hardware
+RTC, usage of \fBfake-hwclock\fP is recommended, while replacing its hourly
+time saving cronjob with a more frequent one may be a good idea as well:
+.PP
+.nf
+rm /etc/cron.hourly/fake-hwclock
+echo -e '*/5 * * * *\\troot\\t/sbin/fake-hwclock save' > /etc/cron.d/fake-hwclock
+.fi
+.SH LOGGING
+\fBlooprm\fP uses log levels derived from syslog, ranging from debug to
+emergency. The default log level is notice. At this level, \fBlooprm\fP logs one
+message on each removed file, as well as all warning and errors.
+.PP
+If a single \fB-v\fP option is given, the log level is changed to info, which
+adds a few statistic messages on filesystem usage, removed files and execution
+time. Giving this option twice changes log level to debug.
+.PP
+Errors encountered while parsing command line options given before the \fB-s\fP
+option are logged to standard error, even if the \fB-s\fP option is given
+later.  As some calling programs (e.g., \fBmotion\fP) silently discard error
+messages from invoked commands, it's recommended to place the \fB-s\fP option
+as the first one when using syslog.
+.SH EXAMPLES
+To implement loop video recording with \fBmotion\fP using \fBlooprm\fP for file
+removal, invoke \fBlooprm\fP using the \fIon_movie_start\fP script option in
+motion.conf (replace \fIEXT\fP with the extension of recorded video files,
+\fIDIR\fP with full path to the target directory and \fISPACE\fP with required
+free space, and adjust arguments to \fB-d\fP and \fB-m\fP according to your
+needs: the argument to \fB-d\fP should match the \fIevent_gap\fP value which
+controls the minimal interval at which \fBmotion\fP creates new files, while
+the argument to \fB-m\fP depends on the ratio between maximal and minimal
+possible file size as described above):
+
+on_movie_start /usr/bin/looprm -suser -d10 -m128 -z -e.\fIEXT\fP \fIDIR\fP
+\fISPACE\fP
+.SH COMPUTATIONAL COMPLEXITY
+The time complexity (a.k.a. CPU usage) and space complexity (a.k.a. memory
+usage) of \fBlooprm\fP depend on:
+.TP
+\fBN\fP
+number of files under target directory
+.TP
+\fBM\fP
+maximal number of removed files (specified with the \fB-m\fP \fIM\fP option)
+.PP
+\fBlooprm\fP first scans the target directory with worst case time complexity
+\fBO(M*N)\fP when reading directory returns files ordered as newest to oldest
+(best case complexity is \fBO(N)\fP when the order is oldest to newest), and
+then removes up to \fBM\fP files with time complexity \fBO(M)\fP.
+.PP
+As the time required for filesystem operations (especially file removal) also
+grows with \fBN\fP, the time complexity of the removal phase is actualy
+\fBO(M*fs(N))\fP, with \fBfs(N)\fP expressing the dependency of file removal
+time on increasing \fBN\fP.
+.PP
+Space complexity is \fBO(M)\fP (or less when the actual number of target
+files is lower than \fBM\fP).
+.SH EXIT STATUS
+Exit status is 0 if the space goal was met, 1 if files were removed but
+the space goal was not met, and 2 in trouble (errors encoutered or
+space goal not met while no target files found).
+.PP
+.SH COPYRIGHT
+Copyright (c) 2025 Vic B <vic@4ever.vip>.
+.br
+License GPLv3: GNU GPL version 3 <https://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+.br
+There is \fBNO WARRANTY\fP, to the extent permitted by law.

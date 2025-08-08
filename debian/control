@@ -1,0 +1,21 @@
+Source: looprm
+Section: utils
+Priority: optional
+Maintainer: Vic B <vic@4ever.vip>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.5.1
+Homepage: https://github.com/vicb3/looprm
+Rules-Requires-Root: no
+
+Package: looprm
+Architecture: any
+Multi-Arch: foreign
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: file removal tool for loop recording
+ looprm is a ligtweight command-line tool to maintain free disk space by
+ removing the oldest files from a directory, suitable to implement the
+ loop recording process for recorders and data loggers.
+ .
+ The program works with minimal CPU and memory usage required to fulfill
+ its mission and can effectively process directories containing large
+ numbers of files.
