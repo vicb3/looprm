@@ -166,10 +166,10 @@ the system time needs to avoid moving backwards. On systems without hardware
 RTC, usage of \fBfake-hwclock\fP is recommended, while replacing its hourly
 time saving cronjob with a more frequent one may be a good idea as well:
 .PP
-.nf
+.EX
 rm /etc/cron.hourly/fake-hwclock
 echo -e '*/5 * * * *\\troot\\t/sbin/fake-hwclock save' > /etc/cron.d/fake-hwclock
-.fi
+.EE
 .SH LOGGING
 \fBlooprm\fP uses log levels derived from syslog, ranging from debug to
 emergency. The default log level is notice. At this level, \fBlooprm\fP logs one
@@ -194,9 +194,10 @@ needs: the argument to \fB-d\fP should match the \fIevent_gap\fP value which
 controls the minimal interval at which \fBmotion\fP creates new files, while
 the argument to \fB-m\fP depends on the ratio between maximal and minimal
 possible file size as described above):
-
-on_movie_start /usr/bin/looprm -suser -d10 -m128 -z -e.\fIEXT\fP \fIDIR\fP
-\fISPACE\fP
+.PP
+.EX
+on_movie_start /usr/bin/looprm -suser -d10 -m128 -z -e.\fIEXT\fP \fIDIR\fP \fISPACE\fP
+.EE
 .SH COMPUTATIONAL COMPLEXITY
 The time complexity (a.k.a. CPU usage) and space complexity (a.k.a. memory
 usage) of \fBlooprm\fP depend on:
