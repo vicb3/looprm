@@ -20,6 +20,7 @@ opts opt = {
 	.n = 0,
 	.p = 0,
 	.q = 0,
+	.r = NULL,
 	.s = NULL,
 	.v = 0,
 	.z = 0
@@ -82,6 +83,9 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'q':
 			opt.q = 1;
+			break;
+		case 'r':
+			opt.r = optarg;
 			break;
 		case 's':
 			opt.s = optarg;

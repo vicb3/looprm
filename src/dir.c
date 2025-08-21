@@ -2,6 +2,7 @@
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
 #include <dirent.h>
+#include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -16,27 +17,35 @@
 
 #define STRACT (noact) ? "not removing" : "removing"
 
-/* scan directory for oldest files with specified name beginning/ending
- * (and optionally also remove empty files) */
-int dir_scn(const char *dir, size_t lnd, const char *bgn, const char *end,
+/* scan directory for oldest files with specified name constraints
+ * (beginning/ending/regex) and optionally also remove empty files) */
+int dir_scn(const char *dir, size_t lnd,
+	const char *bgn, const char *end, const char *reg,
 	int noact, uint empty, size_t *cnte)
 {
-	DIR *d;
+	DIR *d = NULL;
 	struct dirent *de;
 	size_t lnb, lne, lnf, lnp;	/* lenghts: bgn, end, file, path */
 	char pn[CFG_PATH_MAX];		/* pathname */
+	regex_t regp;
 	struct stat st;
 	time_t t = time(NULL);
+	int r = -1;
 
 	*cnte = 0;
+	if (reg && regcomp(&regp, reg, REG_EXTENDED | REG_NOSUB)) {
+		logerr("invalid regular expression %s", reg);
+		return -1;
+	}
+
 	if ((lnd = strlen(dir)) >= CFG_PATH_MAX - 1) {
 		logerr("directory name %s too long", dir);
-		return -1;
+		goto done;
 	}
 
         if (!(d = opendir(dir))) {
                 logerr("unable to open %s: %s", dir, STRERR);
-                return -1;
+                goto done;
         }
 
 	memcpy(pn, dir, lnd);
@@ -63,6 +72,11 @@ int dir_scn(const char *dir, size_t lnd, const char *bgn, const char *end,
 			strcmp(de->d_name + (lnf - lne), end))) {
 			logdbg("ignoring %s (name end mismatch)",
 				de->d_name);
+			continue;
+		}
+
+		if (reg && regexec(&regp, de->d_name, 0, NULL, 0)) {
+			logdbg("ignoring %s (regex mismatch)", de->d_name);
 			continue;
 		}
 
@@ -99,10 +113,15 @@ int dir_scn(const char *dir, size_t lnd, const char *bgn, const char *end,
 			continue;
 		}
 		if (fls_add(pn, lnp, st.st_size, st.st_mtim, st.st_nlink))
-			return -1;
+			goto done;
 	}
-	closedir(d);
-	return 0;
+	r = 0;
+done:
+	if (d)
+		closedir(d);
+	if (reg)
+		regfree(&regp);
+	return r;
 }
 
 /* get fs info (total/free/avail sizes) */
@@ -123,8 +142,9 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 }
 
 int dir_cln(const char *dir, size_t lnd, umax spc,
-	const char *bgn, const char *end, size_t max,
-	int noact, int prv, time_t empty, size_t *cnte, size_t *cntr)
+	const char *bgn, const char *end, const char *reg,
+	size_t max, int noact, int prv, time_t empty,
+	size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza, szr = 0; /* sizes: fs total, fs avail, removed */
@@ -147,7 +167,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc,
 	r = -1;
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, bgn, end, noact, empty, cnte))
+	if (dir_scn(dir, lnd, bgn, end, reg, noact, empty, cnte))
 		goto done;
 	while (fls) {
 		cnts++;

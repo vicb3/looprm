@@ -7,6 +7,7 @@
 #include "tps.h"
 
 int dir_cln(const char *dir, size_t lnd, umax spc,
-	const char *bgn, const char *end, size_t max,
-	int noact, int prv, time_t empty, size_t *cnte, size_t *cntr);
+	const char *bgn, const char *end, const char *reg,
+	size_t max, int noact, int prv, time_t empty,
+	size_t *cnte, size_t *cntr);
 #endif

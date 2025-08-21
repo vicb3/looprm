@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
 		dir[--lnd] = 0;
 	}
 
-	r = dir_cln(dir, lnd, spc, opt.b, opt.e, opt.m, opt.n, opt.p, opt.z,
-		&cnte, &cntr);
+	r = dir_cln(dir, lnd, spc, opt.b, opt.e, opt.r,
+		opt.m, opt.n, opt.p, opt.z, &cnte, &cntr);
 
 	clock_gettime(CLOCK_REALTIME, &t[1]);
 	t[2].tv_sec = t[1].tv_sec - t[0].tv_sec;
