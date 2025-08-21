@@ -22,7 +22,7 @@
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd,
 	const char *bgn, const char *end, const char *reg, uint icase,
-	int noact, uint empty, size_t *cnte)
+	int noact, time_t empty, size_t *cnte)
 {
 	DIR *d = NULL;
 	struct dirent *de;
