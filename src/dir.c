@@ -157,7 +157,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc,
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza, szr = 0; /* sizes: fs total, fs avail, removed */
 	fls_ent *nxt;
-	int r;
+	int r = -1;
 
 	*cnte = *cntr = 0;
 	if (dir_statfs(dir, prv, &szt, &sza))
@@ -172,7 +172,6 @@ int dir_cln(const char *dir, size_t lnd, umax spc,
 	if (spc <= sza)	/* nothing to do */
 		return 0;
 
-	r = -1;
 	if (fls_init(max))
 		return -1;
 	if (dir_scn(dir, lnd, bgn, end, reg, icase, noact, empty, cnte))
