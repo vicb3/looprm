@@ -52,6 +52,7 @@
   "    -d D    warn if execution time exceeds D seconds\n"\
   "    -e E    remove only files with names ending in E\n"\
   "    -h      output usage information\n"\
+  "    -i      case-insensitive name matching with -b/-e/-r\n"\
   "    -l      output built-in limits\n"\
   "    -m M    remove at most M files "\
   	"(default: " STR(CFG_FCNT_DFL) ", maximum: " STR(CFG_FCNT_MAX) ");\n"\
@@ -59,6 +60,7 @@
   "    -n      no-action dry run (log only, no files removed)\n"\
   "    -p      consider free space for privileged users\n"\
   "    -q      disable logging to stderr\n"\
+  "    -r R    remove only files with names matching extended regex R\n"\
   "    -s F    log to syslog with facility F (implies -q)\n"\
   "    -v      increase log verbosity (use twice for debug output)\n"\
   "    -z[A]   remove also all empty files older than A seconds\n"\
