@@ -7,7 +7,8 @@
 #include <string.h>
 
 typedef enum {
-	LOG_PRI_EMG = 0,
+	LOG_PRI_NONE = -1,
+	LOG_PRI_EMG,
 	LOG_PRI_ALR,
 	LOG_PRI_CRT,
 	LOG_PRI_ERR,

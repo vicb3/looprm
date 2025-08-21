@@ -34,7 +34,9 @@ int main(int argc, char *argv[])
 	/* setup logging (except syslog which is handled in opt_init) */
 	if (opt.q)			/* quiet stderr */
 		log_stderr = 0;
-	if (opt.v)			/* verbose debug */
+	if (opt.q && !opt.s)		/* no logging */
+		log_level = LOG_PRI_NONE;
+	else if (opt.v)			/* verbose debug */
 		log_level = (log_level + opt.v <= LOG_PRI_DBG) ?
 			log_level + opt.v : LOG_PRI_DBG;
 
