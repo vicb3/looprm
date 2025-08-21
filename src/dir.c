@@ -5,6 +5,7 @@
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
@@ -20,7 +21,7 @@
 /* scan directory for oldest files with specified name constraints
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd,
-	const char *bgn, const char *end, const char *reg,
+	const char *bgn, const char *end, const char *reg, uint icase,
 	int noact, uint empty, size_t *cnte)
 {
 	DIR *d = NULL;
@@ -28,12 +29,15 @@ int dir_scn(const char *dir, size_t lnd,
 	size_t lnb, lne, lnf, lnp;	/* lenghts: bgn, end, file, path */
 	char pn[CFG_PATH_MAX];		/* pathname */
 	regex_t regp;
+	int (*sc)(const char *s1, const char *s2) = strcmp;
+	int (*snc)(const char *s1, const char *s2, size_t n) = strncmp;
 	struct stat st;
 	time_t t = time(NULL);
 	int r = -1;
 
 	*cnte = 0;
-	if (reg && regcomp(&regp, reg, REG_EXTENDED | REG_NOSUB)) {
+	if (reg && regcomp(&regp, reg,
+		REG_EXTENDED | REG_NOSUB | (icase ? REG_ICASE : 0))) {
 		logerr("invalid regular expression %s", reg);
 		return -1;
 	}
@@ -58,18 +62,22 @@ int dir_scn(const char *dir, size_t lnd,
 		lnb = strlen(bgn);
 	if (end)
 		lne = strlen(end);
-	
+
+	if (icase) {
+		sc = strcasecmp;
+		snc = strncasecmp;
+	}
+
 	while ((de = readdir(d))) {
 		if (de->d_type != DT_REG)
 			continue;
 		lnf = strlen(de->d_name);
-		if (bgn && ((lnf < lnb) || strncmp(de->d_name, bgn, lnb))) {
+		if (bgn && ((lnf < lnb) || snc(de->d_name, bgn, lnb))) {
 			logdbg("ignoring %s (name start mismatch)",
 				de->d_name);
 			continue;
 		}
-		if (end && ((lnf < lne) ||
-			strcmp(de->d_name + (lnf - lne), end))) {
+		if (end && ((lnf < lne) || sc(de->d_name + (lnf - lne), end))) {
 			logdbg("ignoring %s (name end mismatch)",
 				de->d_name);
 			continue;
@@ -142,7 +150,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 }
 
 int dir_cln(const char *dir, size_t lnd, umax spc,
-	const char *bgn, const char *end, const char *reg,
+	const char *bgn, const char *end, const char *reg, uint icase,
 	size_t max, int noact, int prv, time_t empty,
 	size_t *cnte, size_t *cntr)
 {
@@ -167,7 +175,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc,
 	r = -1;
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, bgn, end, reg, noact, empty, cnte))
+	if (dir_scn(dir, lnd, bgn, end, reg, icase, noact, empty, cnte))
 		goto done;
 	while (fls) {
 		cnts++;

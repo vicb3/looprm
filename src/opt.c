@@ -16,6 +16,7 @@ opts opt = {
 	.d = 0,
 	.e = NULL,
 	.h = 0,
+	.i = 0,
 	.m = CFG_FCNT_DFL,
 	.n = 0,
 	.p = 0,
@@ -54,6 +55,9 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'h':
 			opt.h = 1;
+			break;
+		case 'i':
+			opt.i = 1;
 			break;
 		case 'l':
 			opt.l = 1;
