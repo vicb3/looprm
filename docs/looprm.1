@@ -21,9 +21,9 @@ each new file creation event to implement the loop recording feature for
 video/audio recorders and data loggers.
 .PP
 If the free space is lower than \fISPACE\fP, \fBlooprm\fP non-recursively scans
-\fIDIR\fP for regular files (which may be name-filtered with the \fB-b\fP and
-\fB-e\fP options) and then removes the oldest ones (according to file modify
-time) until the free space grows to the requested value.
+\fIDIR\fP for regular files (which may be name-filtered with the \fB-b\fP,
+\fB-e\fP, and \fB-r\fP options) and then removes the oldest ones (according to
+file modify time) until the free space grows to the requested value.
 .PP
 The number of files removed during a single invocation is limited, which allows
 efficient operation even if \fIDIR\fP contains a large number of matching
@@ -59,6 +59,12 @@ Remove only files with names beginning with \fIB\fP.
 .TP
 \fB\-e\fP \fIE\fP
 Remove only files with names ending in \fIE\fP.
+.TP
+\fB\-r\fP \fIR\fP
+Remove only files with names matching POSIX extended regular expression \fIR\fP.
+.TP
+\fB\-i\fP
+Case-insensitive name matching with \fB-b\fP, \fB-e\fP and \fB-r\fP.
 .SS Operation
 .TP
 \fB\-d\fP \fID\fP

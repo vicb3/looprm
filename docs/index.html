@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Thu Aug 21 22:09:47 2025 -->
+<!-- CreationDate: Thu Aug 21 22:43:19 2025 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -101,10 +101,10 @@ video/audio recorders and data loggers.</p>
 <p style="margin-left:11%; margin-top: 1em">If the free
 space is lower than <i>SPACE</i>, <b>looprm</b>
 non-recursively scans <i>DIR</i> for regular files (which
-may be name-filtered with the <b>-b</b> and <b>-e</b>
-options) and then removes the oldest ones (according to file
-modify time) until the free space grows to the requested
-value.</p>
+may be name-filtered with the <b>-b</b>, <b>-e</b>, and
+<b>-r</b> options) and then removes the oldest ones
+(according to file modify time) until the free space grows
+to the requested value.</p>
 
 <p style="margin-left:11%; margin-top: 1em">The number of
 files removed during a single invocation is limited, which
@@ -183,13 +183,11 @@ Selection</b></p>
 
 <p style="margin-top: 1em"><b>-b</b> <i>B</i></p></td>
 <td width="5%"></td>
-<td width="70%">
+<td width="78%">
 
 
 <p style="margin-top: 1em">Remove only files with names
-beginning with <i>B</i>.</p></td>
-<td width="8%">
-</td></tr>
+beginning with <i>B</i>.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="6%">
@@ -197,12 +195,34 @@ beginning with <i>B</i>.</p></td>
 
 <p><b>-e</b> <i>E</i></p></td>
 <td width="5%"></td>
-<td width="70%">
+<td width="78%">
 
 
-<p>Remove only files with names ending in <i>E</i>.</p></td>
-<td width="8%">
-</td></tr>
+<p>Remove only files with names ending in <i>E</i>.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-r</b> <i>R</i></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Remove only files with names matching POSIX extended
+regular expression <i>R</i>.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-i</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Case-insensitive name matching with <b>-b</b>, <b>-e</b>
+and <b>-r</b>.</p></td></tr>
 </table>
 
 
