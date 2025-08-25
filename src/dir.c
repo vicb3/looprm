@@ -163,7 +163,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 			return -1;
 		loginf("%s: free=%juB required=%juB", dir, sza, spc);
 		if (spc >= szt) {
-			logerr("requested free space in %s"
+			logerr("requested free space in %s "
 				"is bigger than whole fs", dir);
 			return -1;
 		}
@@ -214,9 +214,9 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 		fls = nxt;
 	}
 	if (tsm)
-		loginf("%s: total=%juB, removed=%juB", dir, szf, szr);
+		loginf("%s: total=%juB removed=%juB", dir, szf, szr);
 	else
-		loginf("%s: free=%juB, removed=%juB", dir, sza, szr);
+		loginf("%s: free=%juB removed=%juB", dir, sza, szr);
 
 	if (!cnts) {	/* no files spotted */
 		logerr("%s: goal not met but no files to remove", dir);
