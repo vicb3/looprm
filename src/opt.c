@@ -39,9 +39,9 @@ int opt_init(int argc, char *argv[])
 			opt.b = optarg;
 			break;
 		case 'd':
-			e = NULL;
+			errno = 0;
 			opt.d = (time_t) strtoul(optarg, &e, 10);
-			if (e && *e) {
+			if (errno || (e == optarg) || *e) {
 				logerr("invalid argument for -d: %s", optarg);
 				return -1;
 			}
@@ -63,9 +63,9 @@ int opt_init(int argc, char *argv[])
 			opt.l = 1;
 			break;
 		case 'm':
-			e = NULL;
+			errno = 0;
 			opt.m = (size_t) strtoul(optarg, &e, 10);
-			if (e && *e) {
+			if (errno || (e == optarg) || *e) {
 				logerr("invalid argument for -m: %s", optarg);
 				return -1;
 			}
@@ -107,8 +107,9 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'z':
 			if (optarg) {
+				errno = 0;
 				opt.z = (time_t) strtoul(optarg, &e, 10);
-				if (e && *e) {
+				if (errno || (e == optarg) || *e) {
 					logerr("invalid argument for -z: %s",
 						optarg);
 					return -1;

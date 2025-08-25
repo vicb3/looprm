@@ -45,15 +45,15 @@ int sz_unit(umax *dst, char sf)
 int str_sz(umax *dst, const char *str)
 {
 	umax tmp;
-	char *e = NULL;
+	char *e;
 
 	errno = 0;
 	tmp = strtoumax(str, &e, 10);
-	if (errno == ERANGE)
+	if (errno || (e == str))
 		return -1;
 
-	if (e && *e) {
-		if ((e == str) || *(e + 1))
+	if (*e) {
+		if (*(e + 1))
 			return -1;
 		if (sz_unit(&tmp, *e))
 			return -1;
