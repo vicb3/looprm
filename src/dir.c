@@ -218,9 +218,10 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 	else
 		loginf("%s: free=%juB, removed=%juB", dir, sza, szr);
 
-	if (!cnts)	/* no files spotted */
+	if (!cnts) {	/* no files spotted */
 		logerr("%s: goal not met but no files to remove", dir);
-	else if ((tsm && (spc < szf)) || (!tsm && (spc > sza))) {
+		goto done;
+	} else if ((tsm && (spc < szf)) || (!tsm && (spc > sza))) {
 		logerr("%s: goal not met after file removal", dir);
 		if (*cntr)
 			r = 1;
