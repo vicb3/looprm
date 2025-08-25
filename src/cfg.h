@@ -58,7 +58,6 @@
   "    -m M    remove at most M files "\
   	"(default: " STR(CFG_FCNT_DFL) ", maximum: " STR(CFG_FCNT_MAX) ");\n"\
   "            not applied to empty files removed with -z\n"\
-  "    -n      no-action dry run (log only, no files removed)\n"\
   "    -p      consider free space for privileged users\n"\
   "    -q      disable logging to stderr\n"\
   "    -r R    remove only files with names matching extended regex R\n"\

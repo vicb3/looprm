@@ -16,13 +16,11 @@
 #include "log.h"
 #include "tps.h"
 
-#define STRACT (noact) ? "not removing" : "removing"
-
 /* scan directory for oldest files with specified name constraints
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd,
 	const char *bgn, const char *end, const char *reg, uint icase,
-	int noact, time_t empty, size_t *cnte, umax *szf)
+	time_t empty, size_t *cnte, umax *szf)
 {
 	DIR *d = NULL;
 	struct dirent *de;
@@ -110,15 +108,12 @@ int dir_scn(const char *dir, size_t lnd,
 					st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
 				continue;
 			}
-			logntc("%s %s (%lu.%09lu 0B)", STRACT, pn,
+			logntc("removing %s (%lu.%09lu 0B)", pn,
 				st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
-			if(!noact) {
-				if (unlink(pn) < 0)
-					logerr("unable to remove %s: %s",
-						pn, STRERR);
-				else
-					(*cnte)++;
-			}
+			if (unlink(pn) < 0)
+				logerr("unable to remove %s: %s", pn, STRERR);
+			else
+				(*cnte)++;
 			continue;
 		}
 		*szf += st.st_size;
@@ -153,8 +148,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 	const char *bgn, const char *end, const char *reg, uint icase,
-	size_t max, int noact, int prv, time_t empty,
-	size_t *cnte, size_t *cntr)
+	size_t max, int prv, time_t empty, size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza;		/* fs sizes: total, avail */
@@ -179,12 +173,12 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, bgn, end, reg, icase, noact, empty, cnte, &szf))
+	if (dir_scn(dir, lnd, bgn, end, reg, icase, empty, cnte, &szf))
 		goto done;
 
 	if (tsm) {	/* total size mode */
 		loginf("%s: total=%juB limit=%juB", dir, szf, spc);
-		if (szf <= spc) {
+		if (szf <= spc) {	/* nothing to do */
 			r = 0;
 			goto done;
 		}
@@ -192,38 +186,28 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 
 	while (fls) {
 		cnts++;
-		logntc("%s %s (%lu.%09lu %juB)", STRACT, fls->nm,
+		logntc("removing %s (%lu.%09lu %juB)", fls->nm,
 			fls->tm.tv_sec, fls->tm.tv_nsec, (umax) fls->sz);
 		if(fls->hl > 1)
 			logwrn("%s has %zu hardlinks",
 				fls->nm, fls->hl);
-		if (!noact) {
-			if (truncate(fls->nm, 0) < 0)
-				logerr("unable to truncate %s: %s",
-					fls->nm, STRERR);
-			if (unlink(fls->nm) < 0)
-				logerr("unable to remove %s: %s",
-					fls->nm, STRERR);
-			else {
-				(*cntr)++;
-				szr += fls->sz;
-			}
-			if (tsm) {
-				szf -= fls->sz;
-				if (szf <= spc)		/* goal met */
+		if (truncate(fls->nm, 0) < 0)
+			logerr("unable to truncate %s: %s", fls->nm, STRERR);
+		if (unlink(fls->nm) < 0)
+			logerr("unable to remove %s: %s", fls->nm, STRERR);
+		else {
+			(*cntr)++;
+			szr += fls->sz;
+		}
+		if (tsm) {		/* total size mode */
+			szf -= fls->sz;
+			if (szf <= spc)		/* goal met */
+				break;
+		} else {		/* free space mode */
+			if (dir_statfs(dir, prv, &szt, &sza))
+				goto done;
+			if (spc <=  sza)	/* goal met */
 					break;
-			} else {
-				if (dir_statfs(dir, prv, &szt, &sza))
-					goto done;
-				if (spc <=  sza)	/* goal met */
-					break;
-			}
-		} else {	/* noact */
-			if (tsm) {
-				szf -= fls->sz;
-				if (szf <= spc)		/* goal met */
-					break;
-			}
 		}
 		nxt = fls->nxt;
 		fls_ent_free(fls);
@@ -236,10 +220,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 
 	if (!cnts)	/* no files spotted */
 		logerr("%s: goal not met but no files to remove", dir);
-	if (noact)
-		logntc("no-action mode, files not removed");
-	else if ((tsm && cnts && (spc < szf)) ||
-		(!tsm && cnts && (spc > sza))) {
+	else if ((tsm && (spc < szf)) || (!tsm && (spc > sza))) {
 		logerr("%s: goal not met after file removal", dir);
 		if (*cntr)
 			r = 1;

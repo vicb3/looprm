@@ -6,7 +6,7 @@
 
 #include "tps.h"
 
-#define OPT_STR ":b:d:e:hilm:npqr:s:tvz::"
+#define OPT_STR ":b:d:e:hilm:pqr:s:tvz::"
 
 typedef struct {
 	const char *b;		/* filename beginning */
@@ -16,7 +16,6 @@ typedef struct {
 	uint i;			/* case-insensitive matching */
 	uint l;			/* limits */
 	size_t m;		/* max # of non-empty files to remove */
-	uint n;			/* no-act */
 	uint p;			/* consider free space for privileged users */
 	uint q;			/* quiet stderr */
 	const char *r;		/* filename regex */

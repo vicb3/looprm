@@ -18,7 +18,6 @@ opts opt = {
 	.h = 0,
 	.i = 0,
 	.m = CFG_FCNT_DFL,
-	.n = 0,
 	.p = 0,
 	.q = 0,
 	.r = NULL,
@@ -78,9 +77,6 @@ int opt_init(int argc, char *argv[])
 					STR(CFG_FCNT_MAX)")");
 				return -1;
 			}
-			break;
-		case 'n':
-			opt.n = 1;
 			break;
 		case 'p':
 			opt.p = 1;
