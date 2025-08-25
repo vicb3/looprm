@@ -8,6 +8,6 @@
 
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
-	const char *bgn, const char *end, const char *reg, uint icase,
-	size_t max, int prv, time_t empty, size_t *cnte, size_t *cntr);
+	const char *bgn, const char *end, const char *reg, uint ics,
+	size_t max, int prv, time_t emp, size_t *cnte, size_t *cntr);
 #endif

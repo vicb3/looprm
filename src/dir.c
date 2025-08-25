@@ -28,8 +28,8 @@
 /* scan directory for oldest files with specified name constraints
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd, uint usg,
-	const char *bgn, const char *end, const char *reg, uint icase,
-	time_t empty, size_t *cnte, umax *szf)
+	const char *bgn, const char *end, const char *reg, uint ics,
+	time_t emp, size_t *cnte, umax *szf)
 {
 	DIR *d = NULL;
 	struct dirent *de;
@@ -46,7 +46,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	*cnte = 0;
 	*szf = 0;
 	if (reg && regcomp(&regp, reg,
-		REG_EXTENDED | REG_NOSUB | (icase ? REG_ICASE : 0))) {
+		REG_EXTENDED | REG_NOSUB | (ics ? REG_ICASE : 0))) {
 		logerr("invalid regular expression %s", reg);
 		return -1;
 	}
@@ -72,7 +72,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	if (end)
 		lne = strlen(end);
 
-	if (icase) {
+	if (ics) {
 		sc = strcasecmp;
 		snc = strncasecmp;
 	}
@@ -111,8 +111,8 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 		logdbg("found %s (%lu.%09lu %juB)", pn,
 			st.st_mtim.tv_sec, st.st_mtim.tv_nsec, sz);
 
-		if (empty && !sz) {
-			if ((t - st.st_mtim.tv_sec) < empty) {
+		if (emp && !sz) {
+			if ((t - st.st_mtim.tv_sec) < emp) {
 				logdbg("ignoring %s (%lu.%09lu 0B)", pn,
 					st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
 				continue;
@@ -156,8 +156,8 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 }
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
-	const char *bgn, const char *end, const char *reg, uint icase,
-	size_t max, int prv, time_t empty, size_t *cnte, size_t *cntr)
+	const char *bgn, const char *end, const char *reg, uint ics,
+	size_t max, int prv, time_t emp, size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza;		/* fs sizes: total, avail */
@@ -182,7 +182,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, usg, bgn, end, reg, icase, empty, cnte, &szf))
+	if (dir_scn(dir, lnd, usg, bgn, end, reg, ics, emp, cnte, &szf))
 		goto done;
 
 	if (tsm) {	/* total size mode */
