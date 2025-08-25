@@ -6,7 +6,7 @@
 
 #include "tps.h"
 
-#define OPT_STR ":b:d:e:hilm:npqr:s:vz::"
+#define OPT_STR ":b:d:e:hilm:npqr:s:tvz::"
 
 typedef struct {
 	const char *b;		/* filename beginning */
@@ -21,6 +21,7 @@ typedef struct {
 	uint q;			/* quiet stderr */
 	const char *r;		/* filename regex */
 	const char *s;		/* syslog facility */
+	uint t;			/* total size mode */
 	uint v;			/* verbose logging */
 	time_t z;		/* remove zero-sized files (holds min age) */
 } opts;

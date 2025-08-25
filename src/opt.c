@@ -99,6 +99,9 @@ int opt_init(int argc, char *argv[])
 			}
 			log_stderr = 0;
 			break;
+		case 't':
+			opt.t = 1;
+			break;
 		case 'v':
 			opt.v++;
 			break;

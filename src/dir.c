@@ -22,7 +22,7 @@
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd,
 	const char *bgn, const char *end, const char *reg, uint icase,
-	int noact, time_t empty, size_t *cnte)
+	int noact, time_t empty, size_t *cnte, umax *szf)
 {
 	DIR *d = NULL;
 	struct dirent *de;
@@ -36,6 +36,7 @@ int dir_scn(const char *dir, size_t lnd,
 	int r = -1;
 
 	*cnte = 0;
+	*szf = 0;
 	if (reg && regcomp(&regp, reg,
 		REG_EXTENDED | REG_NOSUB | (icase ? REG_ICASE : 0))) {
 		logerr("invalid regular expression %s", reg);
@@ -120,6 +121,7 @@ int dir_scn(const char *dir, size_t lnd,
 			}
 			continue;
 		}
+		*szf += st.st_size;
 		if (fls_add(pn, lnp, st.st_size, st.st_mtim, st.st_nlink))
 			goto done;
 	}
@@ -149,33 +151,45 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 	return 0;
 }
 
-int dir_cln(const char *dir, size_t lnd, umax spc,
+int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 	const char *bgn, const char *end, const char *reg, uint icase,
 	size_t max, int noact, int prv, time_t empty,
 	size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
-	umax szt, sza, szr = 0; /* sizes: fs total, fs avail, removed */
+	umax szt, sza;		/* fs sizes: total, avail */
+	umax szf, szr = 0;	/* file sizes: total, removed */
 	fls_ent *nxt;
 	int r = -1;
 
 	*cnte = *cntr = 0;
-	if (dir_statfs(dir, prv, &szt, &sza))
-		return -1;
-	loginf("%s: free=%juB required=%juB", dir, sza, spc);
 
-	if (spc >= szt) {
-		logerr("requested free space in %s is bigger than whole fs",
-			dir);
-		return -1;
+	if (!tsm) {	/* free space mode */
+		if (dir_statfs(dir, prv, &szt, &sza))
+			return -1;
+		loginf("%s: free=%juB required=%juB", dir, sza, spc);
+		if (spc >= szt) {
+			logerr("requested free space in %s"
+				"is bigger than whole fs", dir);
+			return -1;
+		}
+		if (spc <= sza)	/* nothing to do */
+			return 0;
 	}
-	if (spc <= sza)	/* nothing to do */
-		return 0;
 
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, bgn, end, reg, icase, noact, empty, cnte))
+	if (dir_scn(dir, lnd, bgn, end, reg, icase, noact, empty, cnte, &szf))
 		goto done;
+
+	if (tsm) {	/* total size mode */
+		loginf("%s: total=%juB limit=%juB", dir, szf, spc);
+		if (szf <= spc) {
+			r = 0;
+			goto done;
+		}
+	}
+
 	while (fls) {
 		cnts++;
 		logntc("%s %s (%lu.%09lu %juB)", STRACT, fls->nm,
@@ -194,23 +208,39 @@ int dir_cln(const char *dir, size_t lnd, umax spc,
 				(*cntr)++;
 				szr += fls->sz;
 			}
-			if (dir_statfs(dir, prv, &szt, &sza))
-				goto done;
-			if (spc <=  sza)	/* freed enough */
-				break;
+			if (tsm) {
+				szf -= fls->sz;
+				if (szf <= spc)		/* goal met */
+					break;
+			} else {
+				if (dir_statfs(dir, prv, &szt, &sza))
+					goto done;
+				if (spc <=  sza)	/* goal met */
+					break;
+			}
+		} else {	/* noact */
+			if (tsm) {
+				szf -= fls->sz;
+				if (szf <= spc)		/* goal met */
+					break;
+			}
 		}
 		nxt = fls->nxt;
 		fls_ent_free(fls);
 		fls = nxt;
 	}
-	loginf("%s: free=%juB, removed=%juB", dir, sza, szr);
+	if (tsm)
+		loginf("%s: total=%juB, removed=%juB", dir, szf, szr);
+	else
+		loginf("%s: free=%juB, removed=%juB", dir, sza, szr);
 
 	if (!cnts)	/* no files spotted */
-		logerr("%s: not enough free space but no files to remove", dir);
+		logerr("%s: goal not met but no files to remove", dir);
 	if (noact)
 		logntc("no-action mode, files not removed");
-	else if (cnts && (spc > sza)) {
-		logerr("%s: not enough free space after file removal", dir);
+	else if ((tsm && cnts && (spc < szf)) ||
+		(!tsm && cnts && (spc > sza))) {
+		logerr("%s: goal not met after file removal", dir);
 		if (*cntr)
 			r = 1;
 		goto done;

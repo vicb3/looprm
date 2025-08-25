@@ -6,7 +6,8 @@
 #include <time.h>
 #include "tps.h"
 
-int dir_cln(const char *dir, size_t lnd, umax spc,
+
+int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 	const char *bgn, const char *end, const char *reg, uint icase,
 	size_t max, int noact, int prv, time_t empty,
 	size_t *cnte, size_t *cntr);
