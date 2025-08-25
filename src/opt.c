@@ -22,6 +22,8 @@ opts opt = {
 	.q = 0,
 	.r = NULL,
 	.s = NULL,
+	.t = 0,
+	.u = 0,
 	.v = 0,
 	.z = 0
 };
@@ -97,6 +99,9 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 't':
 			opt.t = 1;
+			break;
+		case 'u':
+			opt.u = 1;
 			break;
 		case 'v':
 			opt.v++;

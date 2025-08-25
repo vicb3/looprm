@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		dir[--lnd] = 0;
 	}
 
-	r = dir_cln(dir, lnd, spc, opt.t, opt.b, opt.e, opt.r, opt.i,
+	r = dir_cln(dir, lnd, spc, opt.t, opt.u, opt.b, opt.e, opt.r, opt.i,
 		opt.m, opt.p, opt.z, &cnte, &cntr);
 
 	clock_gettime(CLOCK_REALTIME, &t[1]);

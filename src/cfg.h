@@ -64,6 +64,7 @@
   "    -s F    log to syslog with facility F (implies -q)\n"\
   "    -t      total size mode: remove files until the sum of their sizes\n"\
   "            drops below SPACE\n"\
+  "    -u      use actual disk usage (size of occupied blocks) as file size\n"\
   "    -v      increase log verbosity (use twice for debug output)\n"\
   "    -z[A]   remove also all empty files older than A seconds\n"\
   "            (default: " STR(CFG_EAGE_DFL) " seconds when A is omitted)\n\n"\

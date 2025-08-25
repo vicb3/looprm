@@ -16,9 +16,18 @@
 #include "log.h"
 #include "tps.h"
 
+/* calculate disk usage of a file from struct stat; as POSIX doesn't really
+ * define block size, assume that it's 1024 bytes on HP-UX and 512 bytes
+ * elsewhere (idea borrowed from coreutils/src/lib/stat-size.h) */
+#if defined hpux || defined __hpux__ || defined __hpux
+#define USG_SZ(st) ((umax) st.st_blocks << 10)
+#else
+#define USG_SZ(st) ((umax) st.st_blocks << 9)
+#endif
+
 /* scan directory for oldest files with specified name constraints
  * (beginning/ending/regex) and optionally also remove empty files) */
-int dir_scn(const char *dir, size_t lnd,
+int dir_scn(const char *dir, size_t lnd, uint usg,
 	const char *bgn, const char *end, const char *reg, uint icase,
 	time_t empty, size_t *cnte, umax *szf)
 {
@@ -30,6 +39,7 @@ int dir_scn(const char *dir, size_t lnd,
 	int (*sc)(const char *s1, const char *s2) = strcmp;
 	int (*snc)(const char *s1, const char *s2, size_t n) = strncmp;
 	struct stat st;
+	umax sz;
 	time_t t = time(NULL);
 	int r = -1;
 
@@ -97,12 +107,11 @@ int dir_scn(const char *dir, size_t lnd,
 			logerr("unable to stat %s: %s", pn, STRERR);
 			continue;
 		}
-
+		sz = (usg) ? USG_SZ(st) : st.st_size;
 		logdbg("found %s (%lu.%09lu %juB)", pn,
-			st.st_mtim.tv_sec, st.st_mtim.tv_nsec,
-			(umax) st.st_size);
+			st.st_mtim.tv_sec, st.st_mtim.tv_nsec, sz);
 
-		if (empty && !st.st_size) {
+		if (empty && !sz) {
 			if ((t - st.st_mtim.tv_sec) < empty) {
 				logdbg("ignoring %s (%lu.%09lu 0B)", pn,
 					st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
@@ -116,8 +125,8 @@ int dir_scn(const char *dir, size_t lnd,
 				(*cnte)++;
 			continue;
 		}
-		*szf += st.st_size;
-		if (fls_add(pn, lnp, st.st_size, st.st_mtim, st.st_nlink))
+		*szf += sz;
+		if (fls_add(pn, lnp, sz, st.st_mtim, st.st_nlink))
 			goto done;
 	}
 	r = 0;
@@ -146,7 +155,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 	return 0;
 }
 
-int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
+int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 	const char *bgn, const char *end, const char *reg, uint icase,
 	size_t max, int prv, time_t empty, size_t *cnte, size_t *cntr)
 {
@@ -173,7 +182,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm,
 
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, bgn, end, reg, icase, empty, cnte, &szf))
+	if (dir_scn(dir, lnd, usg, bgn, end, reg, icase, empty, cnte, &szf))
 		goto done;
 
 	if (tsm) {	/* total size mode */
