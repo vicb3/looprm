@@ -53,7 +53,7 @@ int str_sz(umax *dst, const char *str)
 		return -1;
 
 	if (e && *e) {
-		if (*(e + 1))
+		if ((e == str) || *(e + 1))
 			return -1;
 		if (sz_unit(&tmp, *e))
 			return -1;
