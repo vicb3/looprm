@@ -13,6 +13,7 @@
 
 opts opt = {
 	.b = NULL,
+	.c = 0,
 	.d = 0,
 	.e = NULL,
 	.h = 0,
@@ -39,6 +40,9 @@ int opt_init(int argc, char *argv[])
 		case 'b':
 			opt.b = optarg;
 			break;
+		case 'c':
+			opt.c = 1;
+			break;
 		case 'd':
 			errno = 0;
 			opt.d = (time_t) strtoul(optarg, &e, 10);
@@ -59,9 +63,6 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'i':
 			opt.i = 1;
-			break;
-		case 'l':
-			opt.l = 1;
 			break;
 		case 'm':
 			errno = 0;

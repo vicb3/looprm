@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	/* help & limits */
 	if (opt.h) 			/* show help */
 		puts(CFG_HLP_STR);
-	if (opt.l) {			/* show limits */
+	if (opt.c) {			/* show limits */
 		if (opt.h)
 			putchar('\n');
 		printf(CFG_LMT_STR,
@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
 			(size_t) CFG_PATH_MAX - 1,
 			(size_t) CFG_FCNT_MAX);
 	}
-	if (opt.h || opt.l) {
+	if (opt.h || opt.c) {
 		if (argc > optind) {
-			logalr("unexpected arguments with -h and/or -l");
+			logalr("unexpected arguments with -h and/or -c");
 			return EXIT_ERR;
 		} else
 			return EXIT_OK;

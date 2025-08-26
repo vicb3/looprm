@@ -6,15 +6,15 @@
 
 #include "tps.h"
 
-#define OPT_STR ":b:d:e:hilm:pqr:s:tuvz::"
+#define OPT_STR ":b:cd:e:hilm:pqr:s:tuvz::"
 
 typedef struct {
 	const char *b;		/* filename beginning */
+	uint c;			/* compiled-in limits */
 	time_t d;		/* max duration */
 	const char *e;		/* filename ending */
 	uint h;			/* help */
 	uint i;			/* case-insensitive matching */
-	uint l;			/* limits */
 	size_t m;		/* max # of non-empty files to remove */
 	uint p;			/* consider free space for privileged users */
 	uint q;			/* quiet stderr */
