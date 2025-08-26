@@ -66,11 +66,11 @@ int fls_add(const char *nm, size_t lnm,
 
 	/* new entry */
 	if (!(e = calloc(1, sizeof(fls_ent)))) {
-		logerr("unable to allocate entry for %s", nm);
+		logcrt("unable to allocate entry for %s", nm);
 		return -1;
 	}
 	if (!(e->nm = malloc(lnm + 1))) {
-		logerr("unable to allocate name for %s", nm);
+		logcrt("unable to allocate name for %s", nm);
 		free(e);
 		return -1;
 	}

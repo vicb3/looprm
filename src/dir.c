@@ -47,17 +47,17 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	*szf = 0;
 	if (reg && regcomp(&regp, reg,
 		REG_EXTENDED | REG_NOSUB | (ics ? REG_ICASE : 0))) {
-		logerr("invalid regular expression %s", reg);
+		logalr("invalid regular expression %s", reg);
 		return -1;
 	}
 
 	if ((lnd = strlen(dir)) >= CFG_PATH_MAX - 1) {
-		logerr("directory name %s too long", dir);
+		logalr("directory name %s too long", dir);
 		goto done;
 	}
 
         if (!(d = opendir(dir))) {
-                logerr("unable to open %s: %s", dir, STRERR);
+                logalr("unable to open %s: %s", dir, STRERR);
                 goto done;
         }
 
@@ -97,12 +97,12 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 
 		lnp = lnd + lnf + 1;
 		if (lnp >= CFG_PATH_MAX) {
-			logerr("pathname %s/%s too long", dir, de->d_name);
+			logcrt("pathname %s/%s too long", dir, de->d_name);
 			continue;
 		}
 		memcpy(pn + lnd + 1, de->d_name, lnf + 1);
 		if (lstat(pn, &st) < 0) {
-			logerr("unable to stat %s: %s", pn, STRERR);
+			logcrt("unable to stat %s: %s", pn, STRERR);
 			continue;
 		}
 		if ((st.st_mode & S_IFMT) != S_IFREG)
@@ -121,7 +121,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 			logntc("removing %s (%lu.%09lu 0B)", pn,
 				st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
 			if (unlink(pn) < 0)
-				logerr("unable to remove %s: %s", pn, STRERR);
+				logcrt("unable to remove %s: %s", pn, STRERR);
 			else
 				(*cnte)++;
 			continue;
@@ -146,7 +146,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 	umax bsz;
 
 	if (statvfs(dir, &s)) {
-		logerr("unable to statvfs %s: %s", dir, STRERR);
+		logalr("unable to statvfs %s: %s", dir, STRERR);
 		return -1;
 	}
 
@@ -173,7 +173,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 			return -1;
 		loginf("%s: free=%juB required=%juB", dir, sza, spc);
 		if (spc >= szt) {
-			logerr("requested free space in %s "
+			logalr("requested free space in %s "
 				"is bigger than whole fs", dir);
 			return -1;
 		}
@@ -204,7 +204,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 		if (truncate(fls->nm, 0) < 0)
 			logerr("unable to truncate %s: %s", fls->nm, STRERR);
 		if (unlink(fls->nm) < 0)
-			logerr("unable to remove %s: %s", fls->nm, STRERR);
+			logcrt("unable to remove %s: %s", fls->nm, STRERR);
 		else {
 			(*cntr)++;
 			szr += fls->sz;
@@ -229,7 +229,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 		loginf("%s: free=%juB removed=%juB", dir, sza, szr);
 
 	if (!cnts) {	/* no files spotted */
-		logerr("%s: goal not met but no files to remove", dir);
+		logcrt("%s: goal not met but no files to remove", dir);
 		goto done;
 	} else if ((tsm && (spc < szf)) || (!tsm && (spc > sza))) {
 		logerr("%s: goal not met after file removal", dir);

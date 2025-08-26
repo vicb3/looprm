@@ -43,11 +43,11 @@ int opt_init(int argc, char *argv[])
 			errno = 0;
 			opt.d = (time_t) strtoul(optarg, &e, 10);
 			if (errno || (e == optarg) || *e) {
-				logerr("invalid argument for -d: %s", optarg);
+				logalr("invalid argument for -d: %s", optarg);
 				return -1;
 			}
 			if (opt.d < 1) {
-				logerr("argument for -d must be at least 1");
+				logalr("argument for -d must be at least 1");
 				return -1;
 			}
 			break;
@@ -67,15 +67,15 @@ int opt_init(int argc, char *argv[])
 			errno = 0;
 			opt.m = (size_t) strtoul(optarg, &e, 10);
 			if (errno || (e == optarg) || *e) {
-				logerr("invalid argument for -m: %s", optarg);
+				logalr("invalid argument for -m: %s", optarg);
 				return -1;
 			}
 			if (opt.m < 1) {
-				logerr("argument for -m must be at least 1");
+				logalr("argument for -m must be at least 1");
 				return -1;
 			}
 			if (opt.m > CFG_FCNT_MAX) {
-				logerr("argument for -m too high (max "\
+				logalr("argument for -m too high (max "\
 					STR(CFG_FCNT_MAX)")");
 				return -1;
 			}
@@ -92,7 +92,7 @@ int opt_init(int argc, char *argv[])
 		case 's':
 			opt.s = optarg;
 			if (log_sl_open(opt.s)) {
-				logerr("unknown syslog facility %s", opt.s);
+				logalr("unknown syslog facility %s", opt.s);
 				return -1;
 			}
 			log_stderr = 0;
@@ -111,12 +111,12 @@ int opt_init(int argc, char *argv[])
 				errno = 0;
 				opt.z = (time_t) strtoul(optarg, &e, 10);
 				if (errno || (e == optarg) || *e) {
-					logerr("invalid argument for -z: %s",
+					logalr("invalid argument for -z: %s",
 						optarg);
 					return -1;
 				}
 				if (opt.z < 1) {
-					logerr("argument for -z must be"
+					logalr("argument for -z must be"
 					"at least 1");
 					return -1;
 				}
@@ -124,10 +124,10 @@ int opt_init(int argc, char *argv[])
 				opt.z = CFG_EAGE_DFL;
 			break;
 		case ':':
-			logerr("missing option argument for -%c", optopt);
+			logalr("missing option argument for -%c", optopt);
 			return -1;
 		default:
-			logerr("unknown option -%c", optopt);
+			logalr("unknown option -%c", optopt);
 			return -1;
 		}
 	}

@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	}
 	if (opt.h || opt.l) {
 		if (argc > optind) {
-			logerr("unexpected arguments with -h and/or -l");
+			logalr("unexpected arguments with -h and/or -l");
 			return EXIT_ERR;
 		} else
 			return EXIT_OK;
@@ -61,22 +61,22 @@ int main(int argc, char *argv[])
 
 	/* sanity checks */
 	if (argc - optind <= 1) {	/* missing arguments */
-		logerr("not enough arguments; try " CFG_NAME " -h");
+		logalr("not enough arguments; try " CFG_NAME " -h");
 		return EXIT_ERR;
 	}
 	if (argc - optind > 2) {	/* too many arguments */
-		logerr("too many arguments; try " CFG_NAME " -h");
+		logalr("too many arguments; try " CFG_NAME " -h");
 		return EXIT_ERR;
 	}
 
 	/* parse non-option arguments */
 	dir = argv[optind];
 	if (!(lnd = strlen(dir))) {
-		logerr("empty directory name");
+		logalr("empty directory name");
 		return EXIT_ERR;
 	}
 	if (str_sz(&spc, argv[optind + 1])) {
-			logerr("invalid size %s", argv[optind+1]);
+			logalr("invalid size %s", argv[optind+1]);
 			return EXIT_ERR;
 	}
 	/* strip trailing slashes (except first character for "/") */
