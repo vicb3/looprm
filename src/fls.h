@@ -5,6 +5,7 @@
 #define _FLS_H
 #include <stddef.h>
 #include <sys/types.h>
+#include <time.h>
 
 typedef struct fls_s {
 	char *nm;		/* name */
