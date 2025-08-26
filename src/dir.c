@@ -78,8 +78,6 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	}
 
 	while ((de = readdir(d))) {
-		if (de->d_type != DT_REG)
-			continue;
 		lnf = strlen(de->d_name);
 		if (bgn && ((lnf < lnb) || snc(de->d_name, bgn, lnb))) {
 			logdbg("ignoring %s (name start mismatch)",
@@ -103,10 +101,13 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 			continue;
 		}
 		memcpy(pn + lnd + 1, de->d_name, lnf + 1);
-		if (stat(pn, &st) < 0) {
+		if (lstat(pn, &st) < 0) {
 			logerr("unable to stat %s: %s", pn, STRERR);
 			continue;
 		}
+		if ((st.st_mode & S_IFMT) != S_IFREG)
+			continue;
+
 		sz = (usg) ? USG_SZ(st) : st.st_size;
 		logdbg("found %s (%lu.%09lu %juB)", pn,
 			st.st_mtim.tv_sec, st.st_mtim.tv_nsec, sz);
