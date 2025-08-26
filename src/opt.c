@@ -30,6 +30,25 @@ opts opt = {
 	.z = 0
 };
 
+/* convert optarg to ulong-compatible opt.OPT & check bounds */
+#define OPTARG_ULONG(OPT, MIN, MAX)\
+	errno = 0; \
+	opt.OPT = strtoul(optarg, &e, 10); \
+	if (errno || (e == optarg) || *e) { \
+		logalr("invalid argument for -" STR(OPT) ": %s", optarg); \
+		return -1; \
+	} \
+	if (MIN && (opt.OPT < MIN)) { \
+		logalr("argument for -" STR(OPT) " too low (min " \
+			STR(MIN) "): %s", optarg);\
+		return -1;\
+	} \
+	if (MAX && (opt.OPT > MAX)) {\
+		logalr("argument for -" STR(OPT) " too high (max " \
+			STR(MAX) "): %s", optarg); \
+		return -1; \
+	}
+
 int opt_init(int argc, char *argv[])
 {
 	int o;
@@ -45,16 +64,7 @@ int opt_init(int argc, char *argv[])
 			opt.c = 1;
 			break;
 		case 'd':
-			errno = 0;
-			opt.d = (time_t) strtoul(optarg, &e, 10);
-			if (errno || (e == optarg) || *e) {
-				logalr("invalid argument for -d: %s", optarg);
-				return -1;
-			}
-			if (opt.d < 1) {
-				logalr("argument for -d must be at least 1");
-				return -1;
-			}
+			OPTARG_ULONG(d, 1, 0);
 			break;
 		case 'e':
 			opt.e = optarg;
@@ -66,39 +76,10 @@ int opt_init(int argc, char *argv[])
 			opt.i = 1;
 			break;
 		case 'l':
-			errno = 0;
-			opt.l = strtoul(optarg, &e, 10);
-			if (errno || (e == optarg) || *e) {
-				logalr("invalid argument for -l: %s", optarg);
-				return -1;
-			}
-			if (opt.l < LOG_PRI_ALR) {
-				logalr("argument for -l must be at least "\
-					STR(LOG_PRI_ALR));
-				return -1;
-			}
-			if (opt.l > LOG_PRI_DBG) {
-				logalr("argument for -l too high (max "\
-					STR(LOG_PRI_DBG)")");
-				return -1;
-			}
+			OPTARG_ULONG(l, LOG_PRI_ALR, LOG_PRI_DBG);
 			break;
 		case 'm':
-			errno = 0;
-			opt.m = (size_t) strtoul(optarg, &e, 10);
-			if (errno || (e == optarg) || *e) {
-				logalr("invalid argument for -m: %s", optarg);
-				return -1;
-			}
-			if (opt.m < 1) {
-				logalr("argument for -m must be at least 1");
-				return -1;
-			}
-			if (opt.m > CFG_FCNT_MAX) {
-				logalr("argument for -m too high (max "\
-					STR(CFG_FCNT_MAX)")");
-				return -1;
-			}
+			OPTARG_ULONG(m, 1, CFG_FCNT_MAX);
 			break;
 		case 'p':
 			opt.p = 1;
