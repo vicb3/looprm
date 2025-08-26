@@ -43,11 +43,11 @@
   CFG_COPYRIGHT\
   CFG_DISCLAIMER "\n"\
   "Usage:\n"\
-  "    "CFG_NAME" [OPTION]... DIR SPACE\n\n"\
+  "    " CFG_NAME " [OPTION]... DIR SPACE\n\n"\
   "    DIR     target directory\n"\
-  "    SPACE   minimal requested free space (or maximal total size with -t) "\
-  	"in bytes\n"\
-  "            (supports suffixes K/M/G/T/P/E for KiB/MiB/GiB/TiB/PiB/EiB)\n\n"\
+  "    SPACE   requested minimal free disk space (or maximal total file size\n"\
+  "            with -t) in bytes (supports suffixes K/M/G/T/P/E for\n"\
+  "            KiB/MiB/GiB/TiB/PiB/EiB)\n\n"\
   "Options:\n"\
   "    -b B    remove only files with names beginning with B\n"\
   "    -d D    warn if execution time exceeds D seconds\n"\
@@ -62,14 +62,14 @@
   "    -q      disable logging to stderr\n"\
   "    -r R    remove only files with names matching extended regex R\n"\
   "    -s F    log to syslog with facility F (implies -q)\n"\
-  "    -t      total size mode: remove files until the sum of their sizes\n"\
-  "            drops below SPACE\n"\
+  "    -t      remove files until their total size drops below SPACE\n"\
   "    -u      use actual disk usage (size of occupied blocks) as file size\n"\
   "    -v      increase log verbosity (use twice for debug output)\n"\
   "    -z[A]   remove also all empty files older than A seconds\n"\
   "            (default: " STR(CFG_EAGE_DFL) " seconds when A is omitted)\n\n"\
-  "WARNING: this program IRREVERSIBLY TRUNCATES AND REMOVES oldest files\n"\
-  "under target directory. Use with caution."
+  "WARNING: this program IRREVERSIBLY TRUNCATES AND REMOVES the oldest files\n"\
+  "under the target directory unless and until the free disk space (or total\n"\
+  "file size) goal is met. Use with caution."
 
 #define CFG_LMT_STR\
   "Built-in limits:\n"\
