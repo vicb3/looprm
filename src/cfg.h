@@ -3,6 +3,7 @@
 
 #ifndef _CFG_H
 #define _CFG_H
+#include "log.h"
 
 #if defined(NAME) && defined(VERSION)
 #define CFG_NAME NAME
@@ -55,6 +56,10 @@
   "    -e E    remove only files with names ending in E\n"\
   "    -h      output usage information\n"\
   "    -i      case-insensitive name matching with -b/-e/-r\n"\
+  "    -l L    set log level to L (value " STR(LOG_PRI_ALR) "-"\
+  	STR(LOG_PRI_DBG) " for levels\n"\
+  "            " LOG_PFX_ALR "/" LOG_PFX_CRT "/" LOG_PFX_ERR "/" LOG_PFX_WRN\
+  	"/" LOG_PFX_NTC "/" LOG_PFX_INF "/" LOG_PFX_DBG ")\n"\
   "    -m M    remove at most M files "\
   	"(default: " STR(CFG_FCNT_DFL) ", maximum: " STR(CFG_FCNT_MAX) ");\n"\
   "            not applied to empty files removed with -z\n"\

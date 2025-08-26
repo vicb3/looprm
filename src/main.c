@@ -36,9 +36,13 @@ int main(int argc, char *argv[])
 		log_stderr = 0;
 	if (opt.q && !opt.s)		/* no logging */
 		log_level = LOG_PRI_NONE;
-	else if (opt.v)			/* verbose debug */
-		log_level = (log_level + opt.v <= LOG_PRI_DBG) ?
-			log_level + opt.v : LOG_PRI_DBG;
+	else {
+		if (opt.l)		/* set level */
+			log_level = opt.l;
+		if (opt.v)		/* increase verbosity  */
+			log_level = (log_level + opt.v <= LOG_PRI_DBG) ?
+				log_level + opt.v : LOG_PRI_DBG;
+	}
 
 	/* help & limits */
 	if (opt.h) 			/* show help */

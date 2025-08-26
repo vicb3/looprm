@@ -10,11 +10,11 @@
 #define _LOG_C
 #include "log.h"
 
-log_pri log_level = LOG_PRI_NTC;
-int log_stderr = 1;
+int log_level = LOG_PRI_NTC;
+uint log_stderr = 1;
+uint log_sl = 0;
 
 int log_sl_pri[] = LOG_SL_PRI;
-int log_sl = 0;
 
 struct {
 	char *name;
@@ -66,7 +66,7 @@ void log_sl_close(void)
 	}
 }
 
-void log_printf(log_pri pri, const char *fmt, ...)
+void log_printf(int pri, const char *fmt, ...)
 {
 	va_list args;
 

@@ -18,6 +18,7 @@ opts opt = {
 	.e = NULL,
 	.h = 0,
 	.i = 0,
+	.l = 0,
 	.m = CFG_FCNT_DFL,
 	.p = 0,
 	.q = 0,
@@ -63,6 +64,24 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'i':
 			opt.i = 1;
+			break;
+		case 'l':
+			errno = 0;
+			opt.l = strtoul(optarg, &e, 10);
+			if (errno || (e == optarg) || *e) {
+				logalr("invalid argument for -l: %s", optarg);
+				return -1;
+			}
+			if (opt.l < LOG_PRI_ALR) {
+				logalr("argument for -l must be at least "\
+					STR(LOG_PRI_ALR));
+				return -1;
+			}
+			if (opt.l > LOG_PRI_DBG) {
+				logalr("argument for -l too high (max "\
+					STR(LOG_PRI_DBG)")");
+				return -1;
+			}
 			break;
 		case 'm':
 			errno = 0;

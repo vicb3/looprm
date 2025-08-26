@@ -6,17 +6,17 @@
 #include <errno.h>
 #include <string.h>
 
-typedef enum {
-	LOG_PRI_NONE = -1,
-	LOG_PRI_EMG,
-	LOG_PRI_ALR,
-	LOG_PRI_CRT,
-	LOG_PRI_ERR,
-	LOG_PRI_WRN,
-	LOG_PRI_NTC,
-	LOG_PRI_INF,
-	LOG_PRI_DBG
-} log_pri;
+#include "tps.h"
+
+#define LOG_PRI_NONE -1
+#define LOG_PRI_EMG 0
+#define LOG_PRI_ALR 1
+#define LOG_PRI_CRT 2
+#define LOG_PRI_ERR 3
+#define LOG_PRI_WRN 4
+#define LOG_PRI_NTC 5
+#define LOG_PRI_INF 6
+#define LOG_PRI_DBG 7
 
 #define LOG_PFX_EMG "emergency"
 #define LOG_PFX_ALR "alert"
@@ -52,11 +52,11 @@ typedef enum {
 #define STRERR strerror(errno)
 
 #ifndef _LOG_C
-extern log_pri log_level;
-extern int log_stderr;
+extern int log_level;
+extern uint log_stderr;
 #endif
 
 int log_sl_open(const char *fcl);
 void log_sl_close(void);
-void log_printf(log_pri pri, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+void log_printf(int pri, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
 #endif
