@@ -89,7 +89,6 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 				de->d_name);
 			continue;
 		}
-
 		if (reg && regexec(&regp, de->d_name, 0, NULL, 0)) {
 			logdbg("ignoring %s (regex mismatch)", de->d_name);
 			continue;
@@ -217,7 +216,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 			if (dir_statfs(dir, prv, &szt, &sza))
 				goto done;
 			if (spc <=  sza)	/* goal met */
-					break;
+				break;
 		}
 		nxt = fls->nxt;
 		fls_ent_free(fls);
