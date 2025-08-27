@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 			dir, cntr, t[2].tv_sec, t[2].tv_nsec / 1000000);
 
 	if (opt.d) {
-		if ((t[2].tv_sec > opt.d) ||
+		if ((t[2].tv_sec > (time_t) opt.d) ||
 			((t[2].tv_sec == opt.d) && t[2].tv_nsec > 0))
 			logwrn("%s: execution time %lu.%03lus exceeds expected"
 				" maximum of %lus", dir,
