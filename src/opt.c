@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
+#include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -31,9 +32,15 @@ opts opt = {
 	.z = 0
 };
 
-/* convert optarg to ulong-compatible opt.OPT & check bounds */
+/* convert optarg to ulong in opt.OPT & check bounds */
 #define OPTARG_ULONG(OPT, MIN, MAX)\
 	errno = 0; \
+	while (isspace(*optarg)) \
+		optarg++; \
+	if (*optarg == '-') { \
+		logalr("invalid argument for -" STR(OPT) ": %s", optarg); \
+		return -1; \
+	} \
 	opt.OPT = strtoul(optarg, &e, 10); \
 	if (errno || (e == optarg) || *e) { \
 		logalr("invalid argument for -" STR(OPT) ": %s", optarg); \
