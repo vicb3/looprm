@@ -9,5 +9,5 @@
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 	const char *bgn, const char *end, const char *reg, uint ics,
-	size_t max, int prv, time_t emp, size_t *cnte, size_t *cntr);
+	ulong max, int prv, ulong emp, size_t *cnte, size_t *cntr);
 #endif

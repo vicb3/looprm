@@ -29,7 +29,7 @@
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd, uint usg,
 	const char *bgn, const char *end, const char *reg, uint ics,
-	time_t emp, size_t *cnte, umax *szf)
+	ulong emp, size_t *cnte, umax *szf)
 {
 	DIR *d = NULL;
 	struct dirent *de;
@@ -157,7 +157,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 	const char *bgn, const char *end, const char *reg, uint ics,
-	size_t max, int prv, time_t emp, size_t *cnte, size_t *cntr)
+	ulong max, int prv, ulong emp, size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza;		/* fs sizes: total, avail */

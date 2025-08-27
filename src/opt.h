@@ -9,15 +9,15 @@
 #define OPT_STR ":a:b:cd:e:hil:m:pqr:s:tuvz"
 
 typedef struct {
-	time_t a;		/* minimal file age for -z */
+	ulong a;		/* minimal file age for -z */
 	const char *b;		/* filename beginning */
 	uint c;			/* compiled-in limits */
-	time_t d;		/* max duration */
+	ulong d;		/* max duration */
 	const char *e;		/* filename ending */
 	uint h;			/* help */
 	uint i;			/* case-insensitive matching */
 	uint l;			/* log level */
-	size_t m;		/* max # of non-empty files to remove */
+	ulong m;		/* max # of non-empty files to remove */
 	uint p;			/* consider free space for privileged users */
 	uint q;			/* quiet stderr */
 	const char *r;		/* filename regex */
