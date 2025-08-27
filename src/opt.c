@@ -12,6 +12,7 @@
 #include "str.h"
 
 opts opt = {
+	.a = CFG_EAGE_DFL,
 	.b = NULL,
 	.c = 0,
 	.d = 0,
@@ -57,6 +58,9 @@ int opt_init(int argc, char *argv[])
 	opterr = 0;
 	while ((o = getopt(argc, argv, OPT_STR)) > 0) {
 		switch(o) {
+		case 'a':
+			OPTARG_ULONG(a, 1, 0);
+			break;
 		case 'b':
 			opt.b = optarg;
 			break;
@@ -108,21 +112,7 @@ int opt_init(int argc, char *argv[])
 			opt.v++;
 			break;
 		case 'z':
-			if (optarg) {
-				errno = 0;
-				opt.z = (time_t) strtoul(optarg, &e, 10);
-				if (errno || (e == optarg) || *e) {
-					logalr("invalid argument for -z: %s",
-						optarg);
-					return -1;
-				}
-				if (opt.z < 1) {
-					logalr("argument for -z must be"
-					"at least 1");
-					return -1;
-				}
-			} else
-				opt.z = CFG_EAGE_DFL;
+			opt.z = 1;
 			break;
 		case ':':
 			logalr("missing option argument for -%c", optopt);

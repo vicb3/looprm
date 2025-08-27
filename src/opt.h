@@ -6,9 +6,10 @@
 
 #include "tps.h"
 
-#define OPT_STR ":b:cd:e:hil:m:pqr:s:tuvz::"
+#define OPT_STR ":a:b:cd:e:hil:m:pqr:s:tuvz"
 
 typedef struct {
+	time_t a;		/* minimal file age for -z */
 	const char *b;		/* filename beginning */
 	uint c;			/* compiled-in limits */
 	time_t d;		/* max duration */
@@ -24,7 +25,7 @@ typedef struct {
 	uint t;			/* total size mode */
 	uint u;			/* disk usage as file size */
 	uint v;			/* verbose logging */
-	time_t z;		/* remove zero-sized files (holds min age) */
+	uint z;			/* remove zero-sized files */
 } opts;
 
 #ifndef _OPT_C
