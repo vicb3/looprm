@@ -1,3 +1,15 @@
+looprm (0.2) unstable; urgency=low
+
+  * Add support for:
+    - total size mode (-t).
+    - usage-based file sizes (-u).
+    - arbitrary log level setting (-l).
+  * Improve POSIX compliance.
+  * Improve validation of numeric arguments.
+  * Remove support for dry run.
+
+ -- Vic B <vic@4ever.vip>  Wed, 27 Aug 2025 23:49:49 +0200
+
 looprm (0.1.1) unstable; urgency=low
 
   * Add support for:
