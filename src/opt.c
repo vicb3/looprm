@@ -6,11 +6,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "cfg.h"
-#include "log.h"
 #define _OPT_C
+#include "cfg.h"
 #include "opt.h"
-#include "str.h"
 
 opts opt = {
 	.a = CFG_EAGE_DFL,

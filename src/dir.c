@@ -13,8 +13,6 @@
 #include "cfg.h"
 #include "dir.h"
 #include "fls.h"
-#include "log.h"
-#include "tps.h"
 
 /* calculate disk usage of a file from struct stat; as POSIX doesn't really
  * define block size, assume that it's 1024 bytes on HP-UX and 512 bytes

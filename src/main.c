@@ -8,10 +8,8 @@
 
 #include "cfg.h"
 #include "dir.h"
-#include "log.h"
 #include "opt.h"
 #include "str.h"
-#include "tps.h"
 
 /* exit status codes for main */
 #define EXIT_OK 	0	/* success */

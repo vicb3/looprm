@@ -6,8 +6,8 @@
 #include <string.h>
 #include <syslog.h>
 
-#include "cfg.h"
 #define _LOG_C
+#include "cfg.h"
 #include "log.h"
 
 int log_level = LOG_PRI_NTC;

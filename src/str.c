@@ -5,7 +5,6 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-#include "cfg.h"
 #include "str.h"
 
 typedef struct {

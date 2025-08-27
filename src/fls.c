@@ -2,6 +2,7 @@
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
 #include <stdlib.h>
+
 #define _FLS_C
 #include "fls.h"
 #include "log.h"
