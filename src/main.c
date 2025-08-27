@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
@@ -79,8 +80,11 @@ int main(int argc, char *argv[])
 		logalr("empty directory name");
 		return EXIT_ERR;
 	}
-	if (str_sz(&spc, argv[optind + 1])) {
-			logalr("invalid size %s", argv[optind+1]);
+	optind++;
+	while (isspace(*argv[optind]))
+		argv[optind]++;
+	if (str_sz(&spc, argv[optind])) {
+			logalr("invalid size %s", argv[optind]);
 			return EXIT_ERR;
 	}
 	/* strip trailing slashes (except first character for "/") */

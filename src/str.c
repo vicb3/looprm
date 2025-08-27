@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
-#include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stdlib.h>
@@ -48,8 +47,6 @@ int str_sz(umax *dst, const char *str)
 	umax tmp;
 	char *e;
 
-	while (isspace(*str))
-		str++;
 	if (*str == '-')
 		return -1;
 	errno = 0;
