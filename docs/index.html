@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Thu Aug 21 22:43:19 2025 -->
+<!-- CreationDate: Wed Aug 27 21:36:59 2025 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -41,8 +41,8 @@
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">looprm - remove
-oldest files to maintain free disk space</p>
+<p style="margin-left:11%; margin-top: 1em">looprm - file
+removal tool for loop recording</p>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
@@ -61,12 +61,10 @@ oldest files to maintain free disk space</p>
 
 <p><i>DIR</i></p></td>
 <td width="4%"></td>
-<td width="56%">
+<td width="78%">
 
 
-<p>target directory</p></td>
-<td width="22%">
-</td></tr>
+<p>target directory</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="7%">
@@ -74,16 +72,13 @@ oldest files to maintain free disk space</p>
 
 <p><i>SPACE</i></p></td>
 <td width="4%"></td>
-<td width="56%">
+<td width="78%">
 
 
-<p>minimal requested free space in bytes</p></td>
-<td width="22%">
-</td></tr>
+<p>requested minimal free disk space (or maximal total file
+size with <b>-t</b>) in bytes (supports suffixes K/M/G/T/P/E
+for KiB/MiB/GiB/TiB/PiB/EiB)</p></td></tr>
 </table>
-
-<p style="margin-left:22%;">(supports suffixes K/M/G/T/P/E
-for KiB/MiB/GiB/TiB/PiB/EiB)</p>
 
 <h2>DESCRIPTION
 <a name="DESCRIPTION"></a>
@@ -91,12 +86,17 @@ for KiB/MiB/GiB/TiB/PiB/EiB)</p>
 
 
 <p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
-removes the oldest files under directory <i>DIR</i> unless
-and until the free space on the underlying filesystem
-matches or exceeds <i>SPACE</i>. It operates in one-shot
-mode and is expected to be invoked on each new file creation
-event to implement the loop recording feature for
-video/audio recorders and data loggers.</p>
+maintains free disk space by removing the oldest files under
+the target directory. It operates in one-shot mode and is
+expected to be invoked on each new file creation event to
+implement the loop recording feature for video/audio
+recorders and data loggers.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Unless the
+<b>-t</b> option is given, <b>looprm</b> operates in free
+space mode, in which it removes the oldest files under
+directory <i>DIR</i> unless and until the free space on the
+underlying filesystem matches or exceeds <i>SPACE</i>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">If the free
 space is lower than <i>SPACE</i>, <b>looprm</b>
@@ -105,6 +105,12 @@ may be name-filtered with the <b>-b</b>, <b>-e</b>, and
 <b>-r</b> options) and then removes the oldest ones
 (according to file modify time) until the free space grows
 to the requested value.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The <b>-t</b>
+option switches <b>looprm</b> to total size mode, in which
+it scans <i>DIR</i> for matching files on every invocation
+and then removes the oldest ones unless and until the total
+file size is equal to or less than <i>SPACE</i>.</p>
 
 <p style="margin-left:11%; margin-top: 1em">The number of
 files removed during a single invocation is limited, which
@@ -120,7 +126,7 @@ limit of 16 files is used.</p>
 <b>-z</b> option is given, <b>looprm</b> also removes all
 matching empty files (except freshly created ones to avoid
 removing a newly created file before the first data are
-written to it).</p>
+written to it) during directory scan.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Removed files
 are truncated to zero length before deletion to assure
@@ -134,9 +140,7 @@ other processes.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Options without
 arguments may be concatenated after a single hyphen. Space
-between options and mandatory arguments may be omitted.
-Optional arguments (indicated by square brackets) must
-directly follow options without any separating space.</p>
+between option and its argument may be omitted.</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>Program
 Information</b></p>
@@ -161,7 +165,7 @@ Information</b></p>
 <td width="3%">
 
 
-<p><b>-l</b></p></td>
+<p><b>-c</b></p></td>
 <td width="8%"></td>
 <td width="38%">
 
@@ -232,23 +236,34 @@ and <b>-r</b>.</p></td></tr>
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="7%">
+<td width="6%">
 
 
-<p style="margin-top: 1em"><b>-d</b> <i>D</i></p></td>
-<td width="4%"></td>
+<p style="margin-top: 1em"><b>-a</b> <i>A</i></p></td>
+<td width="5%"></td>
 <td width="78%">
 
 
-<p style="margin-top: 1em">Warn if execution time exceeds
-<i>D</i> seconds.</p></td></tr>
+<p style="margin-top: 1em">Minimal age of empty files for
+<b>-z</b> in seconds (default: 60)</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="7%">
+<td width="6%">
+
+
+<p><b>-d</b> <i>D</i></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Warn if execution time exceeds <i>D</i> seconds.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
 
 
 <p><b>-m</b> <i>M</i></p></td>
-<td width="4%"></td>
+<td width="5%"></td>
 <td width="78%">
 
 
@@ -259,45 +274,59 @@ slightly above the ratio between maximal and minimal
 possible file size (see <b>USAGE</b> below).</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="7%">
-
-
-<p><b>-n</b></p></td>
-<td width="4%"></td>
-<td width="78%">
-
-
-<p>No-action dry run (log only, no files removed).</p></td></tr>
-<tr valign="top" align="left">
-<td width="11%"></td>
-<td width="7%">
+<td width="6%">
 
 
 <p><b>-p</b></p></td>
-<td width="4%"></td>
+<td width="5%"></td>
 <td width="78%">
 
 
 <p>Consider free space for privileged users.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
-<td width="7%">
+<td width="6%">
 
 
-<p><b>-z</b>[<i>A</i>]</p></td>
-<td width="4%"></td>
+<p><b>-t</b></p></td>
+<td width="5%"></td>
 <td width="78%">
 
 
-<p>Remove also all empty files older than <i>A</i> seconds
-(default: 60s when <i>A</i> is omitted). As the presence of
-empty files (which may be created as a result of free space
-exhaustion when unexpected files are created on the target
-filesystem, or <i>SPACE</i> and/or <b>-m</b> <i>M</i> are
-set too low) is disruptive for <b>looprm</b> due to not
-incrementing free space on removal, use of this option is
-recommended to enable removal of such empty files during
-directory scan (see <b>USAGE</b> below).</p></td></tr>
+<p>Remove matching files unless and until their total size
+is equal to or less than <i>SPACE</i>.</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-u</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Use actual disk usage (size of occupied blocks) as file
+size.</p> </td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-z</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Remove also all matching empty files older than 60
+seconds (the age limit can be adjusted with the <b>-a</b>
+option). As the presence of empty files (which may be
+created as a result of free space exhaustion when unexpected
+files are created on the target filesystem, or <i>SPACE</i>
+and/or <b>-m</b> <i>M</i> are set too low) is disruptive for
+<b>looprm</b> due to not incrementing free space on removal,
+use of this option is recommended to enable removal of such
+empty files during directory scan (see <b>USAGE</b>
+below).</p> </td></tr>
 </table>
 
 
@@ -310,13 +339,25 @@ directory scan (see <b>USAGE</b> below).</p></td></tr>
 <td width="6%">
 
 
-<p style="margin-top: 1em"><b>-q</b></p></td>
+<p style="margin-top: 1em"><b>-l</b> <i>L</i></p></td>
 <td width="5%"></td>
 <td width="78%">
 
 
-<p style="margin-top: 1em">Disable logging to standard
-error.</p> </td></tr>
+<p style="margin-top: 1em">Set log level to <i>L</i> (value
+1-7 for log levels alert, critical, error, warning, notice,
+info, debug; default: 5).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-q</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Disable logging to standard error.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="6%">
@@ -348,13 +389,13 @@ error.</p> </td></tr>
 
 
 <p style="margin-left:11%; margin-top: 1em">To achieve
-optimal performance, <i>SPACE</i> should be set to a low
-multiple of the maximal possible file size created by the
-recording process. The maximal number of removed files
-(<b>-m</b> <i>M</i>) should be set to a minimal value
-required to assure freeing of sufficient disk space for such
-maximal file size, i.e., slightly above the ratio between
-maximal and minimal possible file size.</p>
+optimal performance in free space mode, <i>SPACE</i> should
+be set to a low multiple of the maximal possible file size
+created by the recording process. The maximal number of
+removed files (<b>-m</b> <i>M</i>) should be set to a
+minimal value required to assure freeing of sufficient disk
+space for such maximal file size, i.e., slightly above the
+ratio between maximal and minimal possible file size.</p>
 
 <p style="margin-left:11%; margin-top: 1em">For example, in
 case of a data logger or recorder that creates a series of
@@ -399,8 +440,7 @@ remove).</p>
 against removal of just-created files before the first data
 write, emty files newer than a minimal age of 60 seconds are
 not removed with <b>-z</b>. This minimal age may be adjusted
-with the optional argument <i>A</i> to the <b>-z</b>
-option.</p>
+with the <b>-a</b> option.</p>
 
 <p style="margin-left:11%; margin-top: 1em">In cases where
 <b>looprm</b> may get invoked in short intervals (e.g., a
@@ -421,12 +461,13 @@ due to frequent invocations.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
-requires the underlying filesystem to return accurate and
-up-to-date free space information through the statvfs
-syscall immediately after file truncation and removal.
-Current version was tested on ext3/ext4 filesystems, which
-seem to comply with this requirement.</p>
+<p style="margin-left:11%; margin-top: 1em">In free space
+mode, <b>looprm</b> requires the underlying filesystem to
+return accurate and up-to-date free space information
+through the statvfs() function immediately after file
+truncation and removal. Current version was tested on
+ext3/ext4 filesystems, which seem to comply with this
+requirement.</p>
 
 <p style="margin-left:11%; margin-top: 1em">In addition,
 the filesystem must not have block count inconsistencies, as
@@ -442,7 +483,7 @@ strongly recommended.</p>
 <p style="margin-left:11%; margin-top: 1em">To achieve
 maximal disk utilization (by setting <i>SPACE</i> as low as
 possible to keep minimal free space) and maximal efficiency
-(by using low value for <b>-m</b> <i>M</i> to minimize CPU
+(by using a low value for <b>-m</b> <i>M</i> to minimize CPU
 and memory usage), a dedicated partition should be used for
 the loop recording process.</p>
 
@@ -471,15 +512,16 @@ save&rsquo; &gt; /etc/cron.d/fake-hwclock</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>looprm</b>
 uses log levels derived from syslog, ranging from debug to
-emergency. The default log level is notice. At this level,
+emergency. Log level may be set with the <b>-l</b> option.
+The default log level is notice. At this level,
 <b>looprm</b> logs one message on each removed file, as well
-as all warning and errors.</p>
+as all warnings and errors.</p>
 
 <p style="margin-left:11%; margin-top: 1em">If a single
 <b>-v</b> option is given, the log level is changed to info,
 which adds a few statistic messages on filesystem usage,
-removed files and execution time. Giving this option twice
-changes log level to debug.</p>
+removed files, and execution time. Giving this option twice
+changes the log level to debug.</p>
 
 <p style="margin-left:11%; margin-top: 1em">Errors
 encountered while parsing command line options given before
@@ -567,7 +609,7 @@ expressing the dependency of file removal time on increasing
 
 <p style="margin-left:11%; margin-top: 1em">Space
 complexity is <b>O(M)</b> (or less when the actual number of
-target files is lower than <b>M</b>).</p>
+matching files is lower than <b>M</b>).</p>
 
 <h2>EXIT STATUS
 <a name="EXIT STATUS"></a>
