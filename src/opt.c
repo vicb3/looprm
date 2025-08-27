@@ -32,27 +32,27 @@ opts opt = {
 
 /* convert optarg to ulong in opt.OPT & check bounds */
 #define OPTARG_ULONG(OPT, MIN, MAX)\
-	errno = 0; \
-	while (isspace(*optarg)) \
-		optarg++; \
-	if (*optarg == '-') { \
-		logalr("invalid argument for -" STR(OPT) ": %s", optarg); \
-		return -1; \
-	} \
-	opt.OPT = strtoul(optarg, &e, 10); \
-	if (errno || (e == optarg) || *e) { \
-		logalr("invalid argument for -" STR(OPT) ": %s", optarg); \
-		return -1; \
-	} \
-	if (MIN && (opt.OPT < MIN)) { \
-		logalr("argument for -" STR(OPT) " too low (min " \
+	errno = 0;\
+	while (isspace(*optarg))\
+		optarg++;\
+	if (*optarg == '-') {\
+		logalr("invalid argument for -" STR(OPT) ": %s", optarg);\
+		return -1;\
+	}\
+	opt.OPT = strtoul(optarg, &e, 10);\
+	if (errno || (e == optarg) || *e) {\
+		logalr("invalid argument for -" STR(OPT) ": %s", optarg);\
+		return -1;\
+	}\
+	if (MIN && (opt.OPT < MIN)) {\
+		logalr("argument for -" STR(OPT) " too low (min "\
 			STR(MIN) "): %s", optarg);\
 		return -1;\
-	} \
+	}\
 	if (MAX && (opt.OPT > MAX)) {\
-		logalr("argument for -" STR(OPT) " too high (max " \
-			STR(MAX) "): %s", optarg); \
-		return -1; \
+		logalr("argument for -" STR(OPT) " too high (max "\
+			STR(MAX) "): %s", optarg);\
+		return -1;\
 	}
 
 /* additional check for time values */
