@@ -55,6 +55,13 @@ opts opt = {
 		return -1; \
 	}
 
+/* additional check for time values */
+#define OPTARG_TIME(OPT)\
+	if ((time_t) opt.OPT < 0) {\
+		logalr("time argument for -" STR(OPT) " too high: %s", optarg);\
+		return -1;\
+	}
+
 int opt_init(int argc, char *argv[])
 {
 	int o;
@@ -65,6 +72,7 @@ int opt_init(int argc, char *argv[])
 		switch(o) {
 		case 'a':
 			OPTARG_ULONG(a, 1, 0);
+			OPTARG_TIME(a);
 			break;
 		case 'b':
 			opt.b = optarg;
@@ -74,6 +82,7 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'd':
 			OPTARG_ULONG(d, 1, 0);
+			OPTARG_TIME(d);
 			break;
 		case 'e':
 			opt.e = optarg;
