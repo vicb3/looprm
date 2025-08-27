@@ -110,7 +110,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 			st.st_mtim.tv_sec, st.st_mtim.tv_nsec, sz);
 
 		if (emp && !sz) {
-			if ((t - st.st_mtim.tv_sec) < emp) {
+			if ((t - st.st_mtim.tv_sec) < (time_t) emp) {
 				logdbg("ignoring %s (%lu.%09lu 0B)", pn,
 					st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
 				continue;
