@@ -3,10 +3,8 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 #include <syslog.h>
 
-#define _LOG_C
 #include "cfg.h"
 #include "log.h"
 

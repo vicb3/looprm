@@ -3,8 +3,6 @@
 
 #include <dirent.h>
 #include <regex.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <strings.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>

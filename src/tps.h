@@ -4,7 +4,6 @@
 #ifndef _TPS_H
 #define _TPS_H
 #include <stdint.h>
-#include "cfg.h"
 
 typedef unsigned char uchar;
 typedef unsigned int uint;

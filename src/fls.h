@@ -16,9 +16,7 @@ typedef struct fls_s {
 	struct fls_s *nxt;	/* next */
 } fls_ent;
 
-#ifndef _FLS_C
 extern fls_ent *fls;
-#endif
 
 int fls_init(size_t cnt_max);
 /* fls_ent_free and fls_free are for final cleanup only (these don't

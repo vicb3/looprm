@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 
-#define _FLS_C
 #include "fls.h"
 #include "log.h"
 

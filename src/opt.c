@@ -2,11 +2,9 @@
 /* Copyright (c) 2025 Vic B <vic@4ever.vip> */
 
 #include <ctype.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#define _OPT_C
 #include "cfg.h"
 #include "log.h"
 #include "opt.h"

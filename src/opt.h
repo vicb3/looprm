@@ -28,8 +28,7 @@ typedef struct {
 	uint z;			/* remove zero-sized files */
 } opts;
 
-#ifndef _OPT_C
 extern opts opt;
-#endif
+
 int opt_init(int argc, char *argv[]);
 #endif

@@ -51,10 +51,8 @@
 
 #define STRERR strerror(errno)
 
-#ifndef _LOG_C
 extern int log_level;
 extern uint log_stderr;
-#endif
 
 int log_sl_open(const char *fcl);
 void log_sl_close(void);

@@ -4,14 +4,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <time.h>
 
-#include "cfg.h"
 #include "dir.h"
 #include "hlp.h"
-#include "log.h"
 #include "opt.h"
-#include "str.h"
 
 /* exit status codes for main */
 #define EXIT_OK 	0	/* success */
