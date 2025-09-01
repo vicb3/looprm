@@ -8,6 +8,8 @@
 
 #include "cfg.h"
 #include "dir.h"
+#include "hlp.h"
+#include "log.h"
 #include "opt.h"
 #include "str.h"
 
@@ -45,11 +47,11 @@ int main(int argc, char *argv[])
 
 	/* help & limits */
 	if (opt.h) 			/* show help */
-		puts(CFG_HLP_STR);
+		puts(HLP_STR);
 	if (opt.c) {			/* show limits */
 		if (opt.h)
 			putchar('\n');
-		printf(CFG_LMT_STR,
+		printf(LMT_STR,
 			(umax) UMAX_MAX,
 			(size_t) CFG_PATH_MAX - 1,
 			(size_t) CFG_FCNT_MAX);

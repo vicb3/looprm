@@ -8,7 +8,9 @@
 
 #define _OPT_C
 #include "cfg.h"
+#include "log.h"
 #include "opt.h"
+#include "str.h"
 
 opts opt = {
 	.a = CFG_EAGE_DFL,

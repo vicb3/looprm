@@ -12,6 +12,7 @@
 
 #include "cfg.h"
 #include "dir.h"
+#include "log.h"
 #include "fls.h"
 
 /* calculate disk usage of a file from struct stat; as POSIX doesn't really
