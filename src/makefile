@@ -8,7 +8,7 @@ NAME = looprm
 VERSION = TEST.BUILD
 
 CDEFS = -DNAME=\"$(NAME)\" -DVERSION=\"$(VERSION)\"
-CFLAGS ?= -g -O2 -Wall -Werror -pedantic
+CFLAGS ?= -g -O2 -Wall -Wextra -Werror -pedantic
 CPPFLAGS += $(CDEFS)
 
 INSTALL ?= install
