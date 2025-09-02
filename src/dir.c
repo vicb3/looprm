@@ -3,7 +3,6 @@
 
 #include <dirent.h>
 #include <regex.h>
-#include <strings.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
@@ -12,6 +11,7 @@
 #include "dir.h"
 #include "log.h"
 #include "fls.h"
+#include "str.h"
 
 /* calculate disk usage of a file from struct stat; as POSIX doesn't really
  * define block size, assume that it's 1024 bytes on HP-UX and 512 bytes
@@ -33,8 +33,6 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	size_t lnb, lne, lnf, lnp;	/* lenghts: bgn, end, file, path */
 	char pn[CFG_PATH_MAX];		/* pathname */
 	regex_t regp;
-	int (*sc)(const char *s1, const char *s2) = strcmp;
-	int (*snc)(const char *s1, const char *s2, size_t n) = strncmp;
 	struct stat st;
 	umax sz;
 	time_t t = time(NULL);
@@ -69,19 +67,18 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	if (end)
 		lne = strlen(end);
 
-	if (ics) {
-		sc = strcasecmp;
-		snc = strncasecmp;
-	}
+	if (ics)
+		str_ics();
 
 	while ((de = readdir(d))) {
 		lnf = strlen(de->d_name);
-		if (bgn && ((lnf < lnb) || snc(de->d_name, bgn, lnb))) {
+		if (bgn && ((lnf < lnb) || str_ncmp(de->d_name, bgn, lnb))) {
 			logdbg("ignoring %s (name start mismatch)",
 				de->d_name);
 			continue;
 		}
-		if (end && ((lnf < lne) || sc(de->d_name + (lnf - lne), end))) {
+		if (end && ((lnf < lne) ||
+			str_cmp(de->d_name + (lnf - lne), end))) {
 			logdbg("ignoring %s (name end mismatch)",
 				de->d_name);
 			continue;

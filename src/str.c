@@ -3,8 +3,13 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <string.h>
+#include <strings.h>
 
 #include "str.h"
+
+int (*str_cmp)(const char *s1, const char *s2) = strcmp;
+int (*str_ncmp)(const char *s1, const char *s2, size_t n) = strncmp;
 
 typedef struct {
 	const uchar sf;	/* unit suffix */
@@ -21,6 +26,13 @@ unit_ls units[] = {
 	{'E', 60},
 	{0, 0}
 };
+
+/* ignore case */
+void str_ics(void)
+{
+	str_cmp = strcasecmp;
+	str_ncmp = strncasecmp;
+}
 
 /* multiply *dst by size unit suffix in sf */
 int sz_unit(umax *dst, char sf)
