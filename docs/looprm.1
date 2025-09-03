@@ -53,11 +53,11 @@ Options without arguments may be concatenated after a single hyphen.
 Space between option and its argument may be omitted.
 .SS Program Information
 .TP
+\fB\-c\fP
+Output built-in constraints.
+.TP
 \fB\-h\fP
 Output usage information.
-.TP
-\fB\-c\fP
-Output built-in limits.
 .SS Target File Selection
 .TP
 \fB\-b\fP \fIB\fP
@@ -70,7 +70,8 @@ Remove only files with names ending in \fIE\fP.
 Remove only files with names matching POSIX extended regular expression \fIR\fP.
 .TP
 \fB\-i\fP
-Case-insensitive name matching with \fB-b\fP, \fB-e\fP and \fB-r\fP.
+Case-insensitive name matching and ordering with \fB-b\fP, \fB-e\fP, \fB-r\fP
+and \fB-n\fP.
 .SS Operation
 .TP
 \fB\-a\fP \fIA\fP
@@ -84,6 +85,9 @@ Remove at most \fIM\fP files (default: 16, maximum: 16777216); not applied to
 empty files removed with the \fB-z\fP option. The value of \fIM\fP should be
 set slightly above the ratio between maximal and minimal possible file size
 (see \fBUSAGE\fP below).
+.TP
+\fB\-n\fP
+Use name-based lexicographical file ordering.
 .TP
 \fB\-p\fP
 Consider free space for privileged users.
@@ -185,15 +189,21 @@ to keep minimal free space) and maximal efficiency (by using a low value for
 \fB-m\fP \fIM\fP to minimize CPU and memory usage), a dedicated partition
 should be used for the loop recording process.
 .SH SYSTEM TIME REQUIREMENTS
-As \fBlooprm\fP depends on timestamps to identify the oldest files to remove,
-the system time needs to avoid moving backwards. On systems without hardware
-RTC, usage of \fBfake-hwclock\fP is recommended, while replacing its hourly
-time saving cronjob with a more frequent one may be a good idea as well:
+Unless the \fB-n\fP option is given, \fBlooprm\fP depends on timestamps to
+identify the oldest files to remove, so the system time needs to avoid moving
+backwards. On systems without hardware RTC, usage of \fBfake-hwclock\fP is
+recommended, while replacing its hourly time saving cronjob with a more
+frequent one may be a good idea as well:
 .PP
 .EX
 rm /etc/cron.hourly/fake-hwclock
 echo -e '*/5 * * * *\\troot\\t/sbin/fake-hwclock save' > /etc/cron.d/fake-hwclock
 .EE
+.PP
+The \fB-n\fP option switches \fBlooprm\fP to use name-based file ordering and
+sort files according to their filename instead of modify time. This feature
+allows to remove files with sequential names (e.g., containing a fixed-width
+serial number) in creation order regardless of system time fluctuations.
 .SH LOGGING
 \fBlooprm\fP uses log levels derived from syslog, ranging from debug to
 emergency. Log level may be set with the \fB-l\fP option. The default log level

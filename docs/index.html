@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.4 -->
-<!-- CreationDate: Wed Aug 27 21:36:59 2025 -->
+<!-- CreationDate: Wed Sep  3 09:28:40 2025 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -152,26 +152,26 @@ Information</b></p>
 <td width="3%">
 
 
-<p style="margin-top: 1em"><b>-h</b></p></td>
+<p style="margin-top: 1em"><b>-c</b></p></td>
 <td width="8%"></td>
-<td width="38%">
+<td width="43%">
 
 
-<p style="margin-top: 1em">Output usage information.</p></td>
-<td width="40%">
+<p style="margin-top: 1em">Output built-in constraints.</p></td>
+<td width="35%">
 </td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="3%">
 
 
-<p><b>-c</b></p></td>
+<p><b>-h</b></p></td>
 <td width="8%"></td>
-<td width="38%">
+<td width="43%">
 
 
-<p>Output built-in limits.</p></td>
-<td width="40%">
+<p>Output usage information.</p></td>
+<td width="35%">
 </td></tr>
 </table>
 
@@ -225,8 +225,8 @@ regular expression <i>R</i>.</p></td></tr>
 <td width="78%">
 
 
-<p>Case-insensitive name matching with <b>-b</b>, <b>-e</b>
-and <b>-r</b>.</p></td></tr>
+<p>Case-insensitive name matching and ordering with
+<b>-b</b>, <b>-e</b>, <b>-r</b> and <b>-n</b>.</p></td></tr>
 </table>
 
 
@@ -272,6 +272,17 @@ and <b>-r</b>.</p></td></tr>
 <b>-z</b> option. The value of <i>M</i> should be set
 slightly above the ratio between maximal and minimal
 possible file size (see <b>USAGE</b> below).</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="6%">
+
+
+<p><b>-n</b></p></td>
+<td width="5%"></td>
+<td width="78%">
+
+
+<p>Use name-based lexicographical file ordering.</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="6%">
@@ -492,18 +503,26 @@ the loop recording process.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">As
-<b>looprm</b> depends on timestamps to identify the oldest
-files to remove, the system time needs to avoid moving
-backwards. On systems without hardware RTC, usage of
-<b>fake-hwclock</b> is recommended, while replacing its
-hourly time saving cronjob with a more frequent one may be a
-good idea as well:</p>
+<p style="margin-left:11%; margin-top: 1em">Unless the
+<b>-n</b> option is given, <b>looprm</b> depends on
+timestamps to identify the oldest files to remove, so the
+system time needs to avoid moving backwards. On systems
+without hardware RTC, usage of <b>fake-hwclock</b> is
+recommended, while replacing its hourly time saving cronjob
+with a more frequent one may be a good idea as well:</p>
 
 <p style="margin-left:11%; margin-top: 1em">rm
 /etc/cron.hourly/fake-hwclock <br>
 echo -e &rsquo;*/5 * * * *\troot\t/sbin/fake-hwclock
 save&rsquo; &gt; /etc/cron.d/fake-hwclock</p>
+
+<p style="margin-left:11%; margin-top: 1em">The <b>-n</b>
+option switches <b>looprm</b> to use name-based file
+ordering and sort files according to their filename instead
+of modify time. This feature allows to remove files with
+sequential names (e.g., containing a fixed-width serial
+number) in creation order regardless of system time
+fluctuations.</p>
 
 <h2>LOGGING
 <a name="LOGGING"></a>
