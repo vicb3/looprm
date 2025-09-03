@@ -1,3 +1,10 @@
+looprm (0.3) unstable; urgency=low
+
+  * Add support for name-based file ordering.
+  * Minor code cleanups and style fixes.
+
+ -- Vic B <vic@4ever.vip>  Wed, 03 Sep 2025 11:41:04 +0200
+
 looprm (0.2) unstable; urgency=low
 
   * Add support for:
