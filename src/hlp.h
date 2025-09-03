@@ -27,7 +27,7 @@
   "    -d D    warn if execution time exceeds D seconds\n"\
   "    -e E    remove only files with names ending in E\n"\
   "    -h      output usage information\n"\
-  "    -i      case-insensitive name matching with -b/-e/-r\n"\
+  "    -i      case-insensitive name handling with -b/-e/-r and -n\n"\
   "    -l L    set log level to L (value " STR(LOG_PRI_ALR) "-"\
   	STR(LOG_PRI_DBG) " for levels\n"\
   "            " LOG_PFX_ALR "/" LOG_PFX_CRT "/" LOG_PFX_ERR "/" LOG_PFX_WRN\
@@ -35,6 +35,7 @@
   "    -m M    remove at most M files "\
   	"(default: " STR(CFG_FCNT_DFL) ", maximum: " STR(CFG_FCNT_MAX) ");\n"\
   "            not applied to empty files removed with -z\n"\
+  "    -n      name-based file ordering\n"\
   "    -p      consider free space for privileged users\n"\
   "    -q      disable logging to stderr\n"\
   "    -r R    remove only files with names matching extended regex R\n"\

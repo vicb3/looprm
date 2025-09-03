@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	}
 
 	r = dir_cln(dir, lnd, spc, opt.t, opt.u, opt.b, opt.e, opt.r, opt.i,
-		opt.m, opt.p, (opt.z) ? opt.a : 0, &cnte, &cntr);
+		opt.m, opt.n, opt.p, (opt.z) ? opt.a : 0, &cnte, &cntr);
 
 	clock_gettime(CLOCK_REALTIME, &t[1]);
 	t[2].tv_sec = t[1].tv_sec - t[0].tv_sec;

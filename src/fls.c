@@ -5,6 +5,7 @@
 
 #include "fls.h"
 #include "log.h"
+#include "str.h"
 
 /* files are kept in bidirectional sorted (oldest to newest) linked list
  * with at most fls_cnt_max items, with fls_end pointing to the last last one */
@@ -17,6 +18,10 @@ size_t fls_cnt_max;
 	((t1.tv_nsec == t2.tv_nsec) ? \
 		0 : (t1.tv_nsec > t2.tv_nsec) ? 1 : -1) : \
 	((t1.tv_sec > t2.tv_sec) ? 1 : -1))
+
+/* compare nm/tm with fls entry in name (nbo!=0) or time (nbo==0) mode */
+#define FLSCMP(nm, tm, fls, nbo)\
+	(nbo ? str_cmp(nm, fls->nm) : TSCMP(tm, fls->tm))
 
 int fls_init(size_t max)
 {
@@ -42,13 +47,13 @@ void fls_free(void)
 }
 
 int fls_add(const char *nm, size_t lnm,
-	off_t sz,  struct timespec tm, nlink_t hl)
+	off_t sz, struct timespec tm, nlink_t hl, int nbo)
 {
 	fls_ent *e, *tmp;
 
 	if (fls_cnt >= fls_cnt_max) {
 		/* trust fls_cnt that fls_end isn't NULL */
-		if (TSCMP(tm, fls_end->tm) >= 0)
+		if (FLSCMP(nm, tm, fls_end, nbo) >= 0)
 			/* already have fls_cnt_max older files */
 			return 0;
 
@@ -85,21 +90,21 @@ int fls_add(const char *nm, size_t lnm,
 		fls = fls_end = e;
 		goto stored;
 	}
-	if (TSCMP(tm, fls->tm) <= 0) {
+	if (FLSCMP(nm, tm, fls, nbo) <= 0) {
 		/* prepend */
 		fls->prv = e;
 		e->nxt = fls;
 		fls = e;
 		goto stored;
 	}
-	if (TSCMP(tm, fls_end->tm) > 0) {
+	if (FLSCMP(nm, tm, fls_end, nbo) > 0) {
 		/* append */
 		tmp = fls_end;
 		goto append;
 	}
 	/* insert */
 	tmp = fls;
-	while(tmp->nxt && (TSCMP(tm, tmp->nxt->tm) > 0))
+	while(tmp->nxt && (FLSCMP(nm, tm, tmp->nxt, nbo) > 0))
 		tmp = tmp->nxt;
 append:
 	e->prv = tmp;

@@ -20,6 +20,7 @@ opts opt = {
 	.i = 0,
 	.l = 0,
 	.m = CFG_FCNT_DFL,
+	.n = 0,
 	.p = 0,
 	.q = 0,
 	.r = NULL,
@@ -98,6 +99,9 @@ int opt_init(int argc, char *argv[])
 			break;
 		case 'm':
 			OPTARG_ULONG(m, 1, CFG_FCNT_MAX);
+			break;
+		case 'n':
+			opt.n = 1;
 			break;
 		case 'p':
 			opt.p = 1;

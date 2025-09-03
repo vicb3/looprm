@@ -26,7 +26,7 @@
  * (beginning/ending/regex) and optionally also remove empty files) */
 int dir_scn(const char *dir, size_t lnd, uint usg,
 	const char *bgn, const char *end, const char *reg, uint ics,
-	ulong emp, size_t *cnte, umax *szf)
+	uint nbo, ulong emp, size_t *cnte, umax *szf)
 {
 	DIR *d = NULL;
 	struct dirent *de;
@@ -120,7 +120,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 			continue;
 		}
 		*szf += sz;
-		if (fls_add(pn, lnp, sz, st.st_mtim, st.st_nlink))
+		if (fls_add(pn, lnp, sz, st.st_mtim, st.st_nlink, nbo))
 			goto done;
 	}
 	r = 0;
@@ -151,7 +151,7 @@ int dir_statfs(const char *dir, int prv, umax *t, umax *a)
 
 int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 	const char *bgn, const char *end, const char *reg, uint ics,
-	ulong max, int prv, ulong emp, size_t *cnte, size_t *cntr)
+	ulong max, uint nbo, uint prv, ulong emp, size_t *cnte, size_t *cntr)
 {
 	size_t cnts = 0;	/* # of spotted files */
 	umax szt, sza;		/* fs sizes: total, avail */
@@ -176,7 +176,7 @@ int dir_cln(const char *dir, size_t lnd, umax spc, uint tsm, uint usg,
 
 	if (fls_init(max))
 		return -1;
-	if (dir_scn(dir, lnd, usg, bgn, end, reg, ics, emp, cnte, &szf))
+	if (dir_scn(dir, lnd, usg, bgn, end, reg, ics, nbo, emp, cnte, &szf))
 		goto done;
 
 	if (tsm) {	/* total size mode */

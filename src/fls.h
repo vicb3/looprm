@@ -23,5 +23,6 @@ int fls_init(size_t cnt_max);
  * update internal fls_cnt and fls_end) */
 void fls_ent_free(fls_ent *e);
 void fls_free(void);
-int fls_add(const char *nm, size_t nml, off_t sz,  struct timespec tm, nlink_t hl);
+int fls_add(const char *nm, size_t lnm,
+	off_t sz, struct timespec tm, nlink_t hl, int nbo);
 #endif
