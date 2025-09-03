@@ -31,8 +31,11 @@ sudo make install PREFIX=/usr/local
 ```
 
 ## Portability
-As of version 0.2, looprm aims to comply with C99 and POSIX.1-2008 with XSI
+The source code of looprm aims to comply with C99 and POSIX.1-2008 with XSI
 extensions, except for the use of the vsyslog() function.
+
+The build system (makefile) requires GNU Make and a compiler which supports
+generating source file dependencies with the -MM flag.
 
 ## License
 GPLv3: GNU General Public License version 3
