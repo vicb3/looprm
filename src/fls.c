@@ -14,9 +14,9 @@ size_t fls_cnt;
 size_t fls_cnt_max;
 
 /* compare two timespecs */
-#define TSCMP(t1, t2) ((t1.tv_sec == t2.tv_sec) ? \
-	((t1.tv_nsec == t2.tv_nsec) ? \
-		0 : (t1.tv_nsec > t2.tv_nsec) ? 1 : -1) : \
+#define TSCMP(t1, t2) ((t1.tv_sec == t2.tv_sec) ?\
+	((t1.tv_nsec == t2.tv_nsec) ?\
+		0 : (t1.tv_nsec > t2.tv_nsec) ? 1 : -1) :\
 	((t1.tv_sec > t2.tv_sec) ? 1 : -1))
 
 /* compare nm/tm with fls entry in name (nbo!=0) or time (nbo==0) mode */
