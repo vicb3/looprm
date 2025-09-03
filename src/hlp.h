@@ -23,7 +23,7 @@
   "    -a A    minimal age of empty files for -z in seconds (default: "\
   	STR(CFG_EAGE_DFL) ")\n"\
   "    -b B    remove only files with names beginning with B\n"\
-  "    -c      output build-in limits\n"\
+  "    -c      output build-in constraints\n"\
   "    -d D    warn if execution time exceeds D seconds\n"\
   "    -e E    remove only files with names ending in E\n"\
   "    -h      output usage information\n"\
@@ -44,7 +44,7 @@
   	"SPACE\n"\
   "    -u      use actual disk usage (size of occupied blocks) as file size\n"\
   "    -v      increase log verbosity (use twice for debug output)\n"\
-  "    -z      remove also all empty files older than A seconds (see -a)\n"\
+  "    -z      remove also all empty files older than A seconds (see -a)\n\n"\
   "WARNING: this program IRREVERSIBLY TRUNCATES AND REMOVES the oldest files\n"\
   "under the target directory unless and until the free disk space (or total\n"\
   "file size) goal is met. Use with caution."
