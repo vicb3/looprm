@@ -70,6 +70,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 	if (ics)
 		str_ics();
 
+	errno = 0;
 	while ((de = readdir(d))) {
 		lnf = strlen(de->d_name);
 		if (bgn && ((lnf < lnb) || str_ncmp(de->d_name, bgn, lnb))) {
@@ -96,6 +97,7 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 		memcpy(pn + lnd + 1, de->d_name, lnf + 1);
 		if (lstat(pn, &st) < 0) {
 			logcrt("unable to stat %s: %s", pn, STRERR);
+			errno = 0;
 			continue;
 		}
 		if ((st.st_mode & S_IFMT) != S_IFREG)
@@ -113,15 +115,20 @@ int dir_scn(const char *dir, size_t lnd, uint usg,
 			}
 			logntc("removing %s (%lu.%09lu 0B)", pn,
 				st.st_mtim.tv_sec, st.st_mtim.tv_nsec);
-			if (unlink(pn) < 0)
+			if (unlink(pn) < 0) {
 				logcrt("unable to remove %s: %s", pn, STRERR);
-			else
+				errno = 0;
+			} else
 				(*cnte)++;
 			continue;
 		}
 		*szf += sz;
 		if (fls_add(pn, lnp, sz, st.st_mtim, st.st_nlink, nbo))
 			goto done;
+	}
+	if (errno) {
+                logalr("unable to read %s: %s", dir, STRERR);
+		goto done;
 	}
 	r = 0;
 done:
